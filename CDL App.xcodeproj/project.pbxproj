@@ -6,14 +6,91 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		07F9C5D32F0DBFF400A21704 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 07F9C5B42F0DBFCD00A21704 /* WidgetKit.framework */; };
+		07F9C5D42F0DBFF400A21704 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 07F9C5B62F0DBFCD00A21704 /* SwiftUI.framework */; };
+		07F9C5E52F0DBFF500A21704 /* CDLWidgetsExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 07F9C5D22F0DBFF400A21704 /* CDLWidgetsExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		07F9C5E32F0DBFF500A21704 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 07F9C5982F0DBF1400A21704 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 07F9C5D12F0DBFF400A21704;
+			remoteInfo = CDLWidgetsExtension;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		07F9C5CD2F0DBFCE00A21704 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				07F9C5E52F0DBFF500A21704 /* CDLWidgetsExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		07F9C5A02F0DBF1400A21704 /* CDL App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "CDL App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		07F9C5B42F0DBFCD00A21704 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		07F9C5B62F0DBFCD00A21704 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		07F9C5D22F0DBFF400A21704 /* CDLWidgetsExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = CDLWidgetsExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		074DCDF12F101C5200FE5452 /* Exceptions for "CDL App" folder in "CDLWidgetsExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Assets.xcassets,
+				TeamTheme.swift,
+			);
+			target = 07F9C5D12F0DBFF400A21704 /* CDLWidgetsExtension */;
+		};
+		07F9C5E62F0DBFF500A21704 /* Exceptions for "CDLWidgets" folder in "CDLWidgetsExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 07F9C5D12F0DBFF400A21704 /* CDLWidgetsExtension */;
+		};
+		07F9C5EB2F0DC11300A21704 /* Exceptions for "CDLWidgets" folder in "CDL App" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				CDLWidgetsLiveActivity.swift,
+			);
+			target = 07F9C59F2F0DBF1400A21704 /* CDL App */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		07F9C5A22F0DBF1400A21704 /* CDL App */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				074DCDF12F101C5200FE5452 /* Exceptions for "CDL App" folder in "CDLWidgetsExtension" target */,
+			);
 			path = "CDL App";
+			sourceTree = "<group>";
+		};
+		07F9C5B82F0DBFCD00A21704 /* CDLWidgets */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				07F9C5EB2F0DC11300A21704 /* Exceptions for "CDLWidgets" folder in "CDL App" target */,
+			);
+			path = CDLWidgets;
+			sourceTree = "<group>";
+		};
+		07F9C5D52F0DBFF400A21704 /* CDLWidgets */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				07F9C5E62F0DBFF500A21704 /* Exceptions for "CDLWidgets" folder in "CDLWidgetsExtension" target */,
+			);
+			path = CDLWidgets;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -26,6 +103,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		07F9C5CF2F0DBFF400A21704 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				07F9C5D42F0DBFF400A21704 /* SwiftUI.framework in Frameworks */,
+				07F9C5D32F0DBFF400A21704 /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -33,6 +119,9 @@
 			isa = PBXGroup;
 			children = (
 				07F9C5A22F0DBF1400A21704 /* CDL App */,
+				07F9C5B82F0DBFCD00A21704 /* CDLWidgets */,
+				07F9C5D52F0DBFF400A21704 /* CDLWidgets */,
+				07F9C5B32F0DBFCD00A21704 /* Frameworks */,
 				07F9C5A12F0DBF1400A21704 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -41,8 +130,18 @@
 			isa = PBXGroup;
 			children = (
 				07F9C5A02F0DBF1400A21704 /* CDL App.app */,
+				07F9C5D22F0DBFF400A21704 /* CDLWidgetsExtension.appex */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		07F9C5B32F0DBFCD00A21704 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				07F9C5B42F0DBFCD00A21704 /* WidgetKit.framework */,
+				07F9C5B62F0DBFCD00A21704 /* SwiftUI.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -55,10 +154,12 @@
 				07F9C59C2F0DBF1400A21704 /* Sources */,
 				07F9C59D2F0DBF1400A21704 /* Frameworks */,
 				07F9C59E2F0DBF1400A21704 /* Resources */,
+				07F9C5CD2F0DBFCE00A21704 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				07F9C5E42F0DBFF500A21704 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				07F9C5A22F0DBF1400A21704 /* CDL App */,
@@ -69,6 +170,28 @@
 			productName = "CDL App";
 			productReference = 07F9C5A02F0DBF1400A21704 /* CDL App.app */;
 			productType = "com.apple.product-type.application";
+		};
+		07F9C5D12F0DBFF400A21704 /* CDLWidgetsExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 07F9C5E72F0DBFF500A21704 /* Build configuration list for PBXNativeTarget "CDLWidgetsExtension" */;
+			buildPhases = (
+				07F9C5CE2F0DBFF400A21704 /* Sources */,
+				07F9C5CF2F0DBFF400A21704 /* Frameworks */,
+				07F9C5D02F0DBFF400A21704 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				07F9C5D52F0DBFF400A21704 /* CDLWidgets */,
+			);
+			name = CDLWidgetsExtension;
+			packageProductDependencies = (
+			);
+			productName = CDLWidgetsExtension;
+			productReference = 07F9C5D22F0DBFF400A21704 /* CDLWidgetsExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -81,6 +204,9 @@
 				LastUpgradeCheck = 2620;
 				TargetAttributes = {
 					07F9C59F2F0DBF1400A21704 = {
+						CreatedOnToolsVersion = 26.2;
+					};
+					07F9C5D12F0DBFF400A21704 = {
 						CreatedOnToolsVersion = 26.2;
 					};
 				};
@@ -100,12 +226,20 @@
 			projectRoot = "";
 			targets = (
 				07F9C59F2F0DBF1400A21704 /* CDL App */,
+				07F9C5D12F0DBFF400A21704 /* CDLWidgetsExtension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		07F9C59E2F0DBF1400A21704 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		07F9C5D02F0DBFF400A21704 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -122,7 +256,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		07F9C5CE2F0DBFF400A21704 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		07F9C5E42F0DBFF500A21704 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 07F9C5D12F0DBFF400A21704 /* CDLWidgetsExtension */;
+			targetProxy = 07F9C5E32F0DBFF500A21704 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		07F9C5A92F0DBF1500A21704 /* Debug */ = {
@@ -256,6 +405,7 @@
 				DEVELOPMENT_TEAM = XRAY5TDTCG;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -288,6 +438,7 @@
 				DEVELOPMENT_TEAM = XRAY5TDTCG;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -303,6 +454,66 @@
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		07F9C5E82F0DBFF500A21704 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = XRAY5TDTCG;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = CDLWidgets/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = CDLWidgets;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "ddesai.CDL-App.CDLWidgets";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		07F9C5E92F0DBFF500A21704 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = XRAY5TDTCG;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = CDLWidgets/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = CDLWidgets;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "ddesai.CDL-App.CDLWidgets";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
@@ -327,6 +538,15 @@
 			buildConfigurations = (
 				07F9C5AC2F0DBF1500A21704 /* Debug */,
 				07F9C5AD2F0DBF1500A21704 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		07F9C5E72F0DBFF500A21704 /* Build configuration list for PBXNativeTarget "CDLWidgetsExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				07F9C5E82F0DBFF500A21704 /* Debug */,
+				07F9C5E92F0DBFF500A21704 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
