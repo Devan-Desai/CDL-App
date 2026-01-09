@@ -24,8 +24,8 @@ class ScraperService: ObservableObject {
                 
                 let jsonData = scriptTag.data().data(using: .utf8)!
                 
-                // Use a decoder that handles the website's snake_case (e.g. team_name) automatically
                 let decoder = JSONDecoder()
+                // Handles snake_case (like logo_main) automatically
                 decoder.keyDecodingStrategy = .convertFromSnakeCase
                 
                 let decoded = try decoder.decode(BPTeamsResponse.self, from: jsonData)
@@ -33,12 +33,14 @@ class ScraperService: ObservableObject {
                 
                 DispatchQueue.main.async {
                     self.standings = bpTeams.enumerated().map { (index, team) in
-                        // We use the 'teamName' property which the decoder converted from 'team_name'
-                        let name = team.teamName ?? "Unknown Team"
+                        // Using the 'name' key found in your debug test
+                        let name = team.name ?? "Unknown Team"
                         let theme = TeamTheme.theme(for: name)
                         
-                        // Map the player names
-                        let playerList = team.players?.map { $0.playerName ?? "TBD" } ?? []
+                        // Using the 'tag' key found for players (e.g., Cammy, Snoopy)
+                        let playerList = team.players?.compactMap { $0.tag } ?? []
+                        
+                        print("✅ Scraped: \(name) | Roster: \(playerList.joined(separator: ", "))")
                         
                         return TeamStanding(
                             rank: index + 1,
@@ -52,26 +54,25 @@ class ScraperService: ObservableObject {
                             roster: playerList
                         )
                     }
-                    print("--- [SCRAPER] SUCCESS! Loaded \(self.standings.count) Teams & Rosters ---")
+                    print("--- [SCRAPER] SUCCESS! Loaded \(self.standings.count) Teams ---")
                 }
             } catch {
-                print("--- [SCRAPER] FINAL ERROR: \(error) ---")
+                print("--- [SCRAPER] DECODING ERROR: \(error) ---")
             }
         }.resume()
     }
 }
 
-// MARK: - Refined Models
+// MARK: - Updated Models to match BreakingPoint's Database
 struct BPTeamsResponse: Codable { let props: BPProps }
 struct BPProps: Codable { let pageProps: BPPageProps }
 struct BPPageProps: Codable { let teams: [BPTeamEntry] }
 
 struct BPTeamEntry: Codable {
-    // These use Optional (?) so the app won't crash if one is missing
-    let teamName: String?
+    let name: String?       // Matches "name": "Boston Breach"
     let players: [BPPlayerEntry]?
 }
 
 struct BPPlayerEntry: Codable {
-    let playerName: String?
+    let tag: String?        // Matches "tag": "Cammy"
 }

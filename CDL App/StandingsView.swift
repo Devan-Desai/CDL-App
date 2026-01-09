@@ -5,13 +5,9 @@
 //  Created by Devan Desai on 2026-01-06.
 //
 
-
-import SwiftUI
-
 import SwiftUI
 
 struct StandingsView: View {
-    // We now only need the ScraperService as our source of truth
     @StateObject var scraper = ScraperService()
 
     var body: some View {
@@ -30,11 +26,15 @@ struct StandingsView: View {
                 
                 Divider()
                 
-                // Use the scraper's standings. If empty, show loading.
                 if scraper.standings.isEmpty {
                     Spacer()
-                    ProgressView("Fetching Live Rosters...")
-                        .progressViewStyle(CircularProgressViewStyle(tint: .orange))
+                    VStack(spacing: 20) {
+                        ProgressView()
+                            .progressViewStyle(CircularProgressViewStyle(tint: .orange))
+                            .scaleEffect(1.5)
+                        Text("Loading Live CDL Data...")
+                            .foregroundColor(.secondary)
+                    }
                     Spacer()
                 } else {
                     List(scraper.standings) { team in
@@ -46,7 +46,7 @@ struct StandingsView: View {
                                     .fontWeight(.bold)
                                     .frame(width: 30)
                                 
-                                // Team Info (Logo + Name)
+                                // Team Info
                                 HStack {
                                     Image(team.logo)
                                         .resizable()
@@ -58,12 +58,11 @@ struct StandingsView: View {
                                 }
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 
-                                // Points (Currently 0 until we merge the other page)
+                                // Stats (Placeholder 0s until merged)
                                 Text("\(team.points)")
                                     .frame(width: 40)
                                     .fontWeight(.bold)
                                 
-                                // Series Record
                                 Text("\(team.matchWins)-\(team.matchLosses)")
                                     .frame(width: 50)
                                     .foregroundColor(.secondary)
@@ -72,7 +71,6 @@ struct StandingsView: View {
                         }
                     }
                     .listStyle(PlainListStyle())
-                    // Pull to Refresh now triggers the scraper!
                     .refreshable {
                         scraper.fetchStandings()
                     }
@@ -80,19 +78,9 @@ struct StandingsView: View {
             }
             .navigationTitle("CDL Standings")
             .onAppear {
-                // Trigger the live fetch when the app opens
                 scraper.fetchStandings()
             }
         }
-    }
-}
-
-// Keep your TeamDetailView and Previews exactly as they were below this!
-
-struct StandingsView_Previews: PreviewProvider {
-    static var previews: some View {
-        StandingsView()
-            .preferredColorScheme(.dark)
     }
 }
 
@@ -101,7 +89,6 @@ struct TeamDetailView: View {
 
     var body: some View {
         List {
-            // Header with Logo and Stats
             Section {
                 VStack(alignment: .center, spacing: 10) {
                     Image(team.logo)
@@ -127,7 +114,6 @@ struct TeamDetailView: View {
                 .padding()
             }
             
-            // Roster Section
             Section(header: Text("Active Roster")) {
                 ForEach(team.roster, id: \.self) { player in
                     HStack {
@@ -142,5 +128,12 @@ struct TeamDetailView: View {
         }
         .navigationTitle(team.name)
         .navigationBarTitleDisplayMode(.inline)
+    }
+}
+
+struct StandingsView_Previews: PreviewProvider {
+    static var previews: some View {
+        StandingsView()
+            .preferredColorScheme(.dark)
     }
 }

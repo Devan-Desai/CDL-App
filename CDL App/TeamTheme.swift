@@ -20,7 +20,7 @@ struct TeamTheme {
             return TeamTheme(logo: "optic", color: Color(hex: "#92c951"), shortName: "OPTIC")
         case "FaZe Vegas":
             return TeamTheme(logo: "faze", color: Color(hex: "#ff00ff"), shortName: "FAZE")
-        case "LA Thieves":
+        case "Los Angeles Thieves":
             return TeamTheme(logo: "thieves", color: Color(hex: "#ff0000"), shortName: "LAT")
         case "Toronto KOI":
             return TeamTheme(logo: "koi", color: Color(hex: "#782cf2"), shortName: "KOI")
@@ -28,7 +28,7 @@ struct TeamTheme {
             return TeamTheme(logo: "cloud9", color: Color(hex: "#00aeef"), shortName: "C9")
         case "Miami Heretics":
             return TeamTheme(logo: "heretics", color: Color(hex: "#dd6d17"), shortName: "MIA")
-        case "Carolina Ravens":
+        case "Carolina Royal Ravens":
             return TeamTheme(logo: "ravens", color: Color(hex: "#0083c1"), shortName: "CAR")
         case "Vancouver Surge":
             return TeamTheme(logo: "surge", color: Color(hex: "#00667d"), shortName: "VAN")
