@@ -11,8 +11,8 @@ import SwiftUI
 import SwiftUI
 
 struct StandingsView: View {
-    // 1. ADD THIS LINE: This creates the connection to your data engine
-    @StateObject var loader = DataLoader()
+    // We now only need the ScraperService as our source of truth
+    @StateObject var scraper = ScraperService()
 
     var body: some View {
         NavigationView {
@@ -30,13 +30,14 @@ struct StandingsView: View {
                 
                 Divider()
                 
-                // 2. CHECK THIS: If standings is empty, show a loading spinner
-                if loader.standings.isEmpty {
+                // Use the scraper's standings. If empty, show loading.
+                if scraper.standings.isEmpty {
                     Spacer()
-                    ProgressView("Fetching Rosters...") // Built-in Apple spinner
+                    ProgressView("Fetching Live Rosters...")
+                        .progressViewStyle(CircularProgressViewStyle(tint: .orange))
                     Spacer()
                 } else {
-                    List(loader.standings) { team in
+                    List(scraper.standings) { team in
                         NavigationLink(destination: TeamDetailView(team: team)) {
                             HStack {
                                 // Rank
@@ -57,7 +58,7 @@ struct StandingsView: View {
                                 }
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 
-                                // Points
+                                // Points (Currently 0 until we merge the other page)
                                 Text("\(team.points)")
                                     .frame(width: 40)
                                     .fontWeight(.bold)
@@ -71,16 +72,16 @@ struct StandingsView: View {
                         }
                     }
                     .listStyle(PlainListStyle())
-                    // 3. ADD THIS: Allows you to pull down to refresh the data!
+                    // Pull to Refresh now triggers the scraper!
                     .refreshable {
-                        loader.loadData()
+                        scraper.fetchStandings()
                     }
                 }
             }
             .navigationTitle("CDL Standings")
-            // 4. ADD THIS: This triggers the fetch as soon as the screen opens
             .onAppear {
-                loader.loadData()
+                // Trigger the live fetch when the app opens
+                scraper.fetchStandings()
             }
         }
     }

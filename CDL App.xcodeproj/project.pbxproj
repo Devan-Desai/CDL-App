@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		075F59362F104A9400E3AA3B /* SwiftSoup in Frameworks */ = {isa = PBXBuildFile; productRef = 075F59352F104A9400E3AA3B /* SwiftSoup */; };
 		07F9C5D32F0DBFF400A21704 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 07F9C5B42F0DBFCD00A21704 /* WidgetKit.framework */; };
 		07F9C5D42F0DBFF400A21704 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 07F9C5B62F0DBFCD00A21704 /* SwiftUI.framework */; };
 		07F9C5E52F0DBFF500A21704 /* CDLWidgetsExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 07F9C5D22F0DBFF400A21704 /* CDLWidgetsExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -100,6 +101,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				075F59362F104A9400E3AA3B /* SwiftSoup in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -166,6 +168,7 @@
 			);
 			name = "CDL App";
 			packageProductDependencies = (
+				075F59352F104A9400E3AA3B /* SwiftSoup */,
 			);
 			productName = "CDL App";
 			productReference = 07F9C5A02F0DBF1400A21704 /* CDL App.app */;
@@ -220,6 +223,9 @@
 			);
 			mainGroup = 07F9C5972F0DBF1400A21704;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				075F59322F10474200E3AA3B /* XCRemoteSwiftPackageReference "SwiftSoup" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 07F9C5A12F0DBF1400A21704 /* Products */;
 			projectDirPath = "";
@@ -552,6 +558,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		075F59322F10474200E3AA3B /* XCRemoteSwiftPackageReference "SwiftSoup" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/scinfu/SwiftSoup.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.11.3;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		075F59352F104A9400E3AA3B /* SwiftSoup */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 075F59322F10474200E3AA3B /* XCRemoteSwiftPackageReference "SwiftSoup" */;
+			productName = SwiftSoup;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 07F9C5982F0DBF1400A21704 /* Project object */;
 }
