@@ -107,3 +107,21 @@ struct CDLWidgetsLiveActivity: Widget {
     }
 }
 
+#Preview(
+    "Dynamic Island Compact",
+    as: .content,
+    using: CDLAttributes(
+        matchName: "Major 1",
+        team1Name: "Cloud9 New York",
+        team2Name: "FaZe Vegas"
+    )
+) {
+    CDLWidgetsLiveActivity()
+} contentStates: {
+    CDLAttributes.ContentState(
+        team1Score: 2,
+        team2Score: 1,
+        mapName: "Hardpoint - Karachi"
+    )
+}
+
