@@ -83,23 +83,64 @@ struct CDLWidgetsLiveActivity: Widget {
             .activityBackgroundTint(Color.black.opacity(0.85))
             .activitySystemActionForegroundColor(Color.white)
         } dynamicIsland: { context in
-            // ... (Your Dynamic Island code)
+            // ... (Dynamic Island code)
             DynamicIsland {
-                 DynamicIslandExpandedRegion(.leading) {
-                     let t1 = TeamTheme.theme(for: context.attributes.team1Name)
-                     Label(t1.shortName, image: t1.logo).foregroundColor(t1.color)
-                 }
-                 DynamicIslandExpandedRegion(.trailing) {
-                     let t2 = TeamTheme.theme(for: context.attributes.team2Name)
-                     Label(t2.shortName, image: t2.logo).foregroundColor(t2.color)
-                 }
-                 DynamicIslandExpandedRegion(.bottom) {
-                     Text("\(context.state.team1Score) - \(context.state.team2Score)").font(.title).bold()
+                DynamicIslandExpandedRegion(.center) {
+                    Text(context.attributes.matchName.uppercased())
+                        .font(.system(size: 11, weight: .bold))
+                        .foregroundColor(.secondary)
+                        .padding(.top, 5)
+                }
+                DynamicIslandExpandedRegion(.bottom) {
+                    let team1 = TeamTheme.theme(for: context.attributes.team1Name)
+                    let team2 = TeamTheme.theme(for: context.attributes.team2Name)
+                    
+                    VStack(spacing: 8) {
+                        HStack{
+                            VStack(spacing: 4) { // Left Team
+                                Image(team1.logo)
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 40, height: 40)
+                                Text(context.attributes.team1Name)
+                                    .font(.system(size: 12,weight: .bold))
+                                    .foregroundColor(team1.color)
+                            }
+                            .frame(maxWidth: .infinity)
+                            HStack(spacing: 8) { // Center Score
+                                Text("\(context.state.team1Score)").font(.system(size: 38, weight: .black, design: .rounded))
+                                Text("-").font(.title2)
+                                Text("\(context.state.team2Score)").font(.system(size: 38, weight: .black, design: .rounded))
+                            }
+                            VStack(spacing: 4) { // Right Team
+                                Image(team2.logo)
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 40, height: 40)
+                                Text(context.attributes.team2Name)
+                                    .font(.system(size: 12,weight: .bold))
+                                    .foregroundColor(team2.color)
+                            }
+                            .frame(maxWidth: .infinity)
+                        }
+                        Text(context.state.mapName)
+                            .font(.system(size: 10, weight: .heavy))
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 3)
+                            .background(Capsule().fill(Color.white.opacity(0.15)))
+                            .padding(.bottom, 5)
+                    }
                  }
             } compactLeading: {
-                Image(TeamTheme.theme(for: context.attributes.team1Name).logo).resizable().frame(width: 20, height: 20)
+                HStack(spacing: 10) {
+                    Image(TeamTheme.theme(for: context.attributes.team1Name).logo).resizable().frame(width: 15, height: 15)
+                    Text("\(context.state.team1Score)")
+                }
             } compactTrailing: {
-                Text("\(context.state.team1Score)-\(context.state.team2Score)")
+                HStack(spacing: 10) {
+                    Text("\(context.state.team2Score)")
+                    Image(TeamTheme.theme(for: context.attributes.team2Name).logo).resizable().frame(width: 15, height: 15)
+                }
             } minimal: {
                 Image(TeamTheme.theme(for: context.attributes.team1Name).logo).resizable()
             }
@@ -112,8 +153,8 @@ struct CDLWidgetsLiveActivity: Widget {
     as: .content,
     using: CDLAttributes(
         matchName: "Major 1",
-        team1Name: "Cloud9 New York",
-        team2Name: "FaZe Vegas"
+        team1Name: "Paris Gentle Mates",
+        team2Name: "OpTic Texas"
     )
 ) {
     CDLWidgetsLiveActivity()
