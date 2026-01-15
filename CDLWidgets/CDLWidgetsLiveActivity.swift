@@ -153,8 +153,8 @@ struct CDLWidgetsLiveActivity: Widget {
     as: .content,
     using: CDLAttributes(
         matchName: "Major 1",
-        team1Name: "Paris Gentle Mates",
-        team2Name: "OpTic Texas"
+        team1Name: "Los Angeles Thieves",
+        team2Name: "G2 Minnesota"
     )
 ) {
     CDLWidgetsLiveActivity()
