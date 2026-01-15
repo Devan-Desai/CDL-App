@@ -8,7 +8,29 @@
 import SwiftUI
 
 struct StandingsView: View {
-    @StateObject var scraper = ScraperService()
+    @StateObject var rosterScraper = ScraperService()
+    @StateObject var standingsScraper = StandingsScraperService()
+    
+    var mergedStandings: [TeamStanding] {
+        standingsScraper.standings.map { standing in
+            // Find matching roster from rosterScraper
+            let roster = rosterScraper.standings.first(where: {
+                $0.name == standing.name
+            })?.roster ?? []
+            
+            return TeamStanding(
+                rank: standing.rank,
+                name: standing.name,
+                logo: standing.logo,
+                points: standing.points,
+                matchWins: standing.matchWins,
+                matchLosses: standing.matchLosses,
+                mapWins: standing.mapWins,
+                mapLosses: standing.mapLosses,
+                roster: roster
+            )
+        }
+    }
 
     var body: some View {
         NavigationView {
@@ -26,7 +48,7 @@ struct StandingsView: View {
                 
                 Divider()
                 
-                if scraper.standings.isEmpty {
+                if standingsScraper.standings.isEmpty {
                     Spacer()
                     VStack(spacing: 20) {
                         ProgressView()
@@ -37,7 +59,7 @@ struct StandingsView: View {
                     }
                     Spacer()
                 } else {
-                    List(scraper.standings) { team in
+                    List(mergedStandings) { team in
                         NavigationLink(destination: TeamDetailView(team: team)) {
                             HStack {
                                 // Rank
@@ -58,7 +80,7 @@ struct StandingsView: View {
                                 }
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 
-                                // Stats (Placeholder 0s until merged)
+                                // Stats
                                 Text("\(team.points)")
                                     .frame(width: 40)
                                     .fontWeight(.bold)
@@ -72,13 +94,15 @@ struct StandingsView: View {
                     }
                     .listStyle(PlainListStyle())
                     .refreshable {
-                        scraper.fetchStandings()
+                        standingsScraper.fetchStandings()
+                        rosterScraper.fetchStandings()
                     }
                 }
             }
             .navigationTitle("CDL Standings")
             .onAppear {
-                scraper.fetchStandings()
+                standingsScraper.fetchStandings()
+                rosterScraper.fetchStandings()
             }
         }
     }
@@ -106,7 +130,11 @@ struct TeamDetailView: View {
                         }
                         VStack {
                             Text("\(team.matchWins)-\(team.matchLosses)").font(.headline)
-                            Text("Series").font(.caption).foregroundColor(.secondary)
+                            Text("Series W/L").font(.caption).foregroundColor(.secondary)
+                        }
+                        VStack {
+                            Text("\(team.mapWins)-\(team.mapLosses)").font(.headline)
+                            Text("Map W/L").font(.caption).foregroundColor(.secondary)
                         }
                     }
                 }
@@ -115,14 +143,26 @@ struct TeamDetailView: View {
             }
             
             Section(header: Text("Active Roster")) {
-                ForEach(team.roster, id: \.self) { player in
+                if team.roster.isEmpty {
                     HStack {
-                        Image(systemName: "person.circle.fill")
-                            .foregroundColor(.orange)
-                        Text(player)
-                            .font(.headline)
+                        ProgressView()
+                            .progressViewStyle(CircularProgressViewStyle())
+                            .scaleEffect(0.8)
+                        Text("Loading roster...")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
                     }
                     .padding(.vertical, 5)
+                } else {
+                    ForEach(team.roster, id: \.self) { player in
+                        HStack {
+                            Image(systemName: "person.circle.fill")
+                                .foregroundColor(.orange)
+                            Text(player)
+                                .font(.headline)
+                        }
+                        .padding(.vertical, 5)
+                    }
                 }
             }
         }
