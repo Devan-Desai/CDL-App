@@ -15,7 +15,6 @@ struct CDLAttributes: ActivityAttributes {
         var team2Score: Int
         var mapName: String
     }
-    var matchName: String // Static: e.g., "Major 1 Grand Finals"
     var team1Name: String
     var team2Name: String
 }
@@ -27,58 +26,81 @@ struct CDLWidgetsLiveActivity: Widget {
             // Look up themes
             let team1 = TeamTheme.theme(for: context.attributes.team1Name)
             let team2 = TeamTheme.theme(for: context.attributes.team2Name)
-            
-            VStack(spacing: 4) {
-                // Header (e.g., Major 1 Finals)
-                Text(context.attributes.matchName.uppercased())
-                    .font(.system(size: 11, weight: .bold))
-                    .foregroundColor(.secondary)
-                    .padding(.top, 8)
-                
-                HStack {
-                    // Left Team: Logo then Name
-                    VStack(spacing: 6) {
-                        Image(team1.logo, bundle: nil)
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 44, height: 44)
-                        Text(context.attributes.team1Name)
-                            .font(.system(size: 13, weight: .bold))
-                            .foregroundColor(team1.color)
-                    }
-                    .frame(maxWidth: .infinity)
+            ZStack{
+                LinearGradient( stops: [.init(color: team1.color, location: -0.5),
+                                        .init(color: .black, location: 0.49),
+                                        .init(color: .black, location: 0.51),
+                                        .init(color: team2.color, location: 1.5)
+            ],
+            startPoint: .leading,
+            endPoint: .trailing)
+                VStack(spacing: 4) {
+                    // Header
+                    Text("CDL".uppercased())
+                        .font(.system(size: 11, weight: .bold))
+                        .foregroundColor(.white)
+                        .opacity(0.7)
+                        .padding(.top, 8)
                     
-                    // Center Score
-                    HStack(spacing: 12) {
-                        Text("\(context.state.team1Score)")
-                            .font(.system(size: 48, weight: .black, design: .rounded))
-                        Text("-")
-                            .font(.title2)
-                            .foregroundColor(.secondary)
-                        Text("\(context.state.team2Score)")
-                            .font(.system(size: 48, weight: .black, design: .rounded))
+                    HStack {
+                        // Left Team: Logo then Name
+                        VStack(spacing: 6) {
+                            Image(team1.logo, bundle: nil)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 44, height: 44)
+                                .overlay(alignment: .bottom) {
+                                    Text(team1.shortName)
+                                        .font(.system(size: 13, weight: .bold))
+                                        .foregroundColor(.white)
+                                        .opacity(0.7)
+                                        .offset(y: 22)
+                                }
+                        }
+                        .frame(maxWidth: .infinity)
+                        
+                        // Center Score
+                        HStack(spacing: 12) {
+                            Text("\(context.state.team1Score)")
+                                .font(.system(size: 48, weight: .bold))
+                                .foregroundColor(.white)
+                                .opacity(0.9)
+                            Text("-")
+                                .font(.title2)
+                                .foregroundColor(.white)
+                                .opacity(0.9)
+                            Text("\(context.state.team2Score)")
+                                .font(.system(size: 48, weight: .bold))
+                                .foregroundColor(.white)
+                                .opacity(0.9)
+                        }
+                        
+                        // Right Team: Logo then Name
+                        VStack(spacing: 6) {
+                            Image(team2.logo, bundle: nil)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 44, height: 44)
+                                .overlay(alignment: .bottom) {
+                                    Text(team2.shortName)
+                                        .font(.system(size: 13, weight: .bold))
+                                        .foregroundColor(.white)
+                                        .opacity(0.7)
+                                        .offset(y: 22)
+                                }
+                        }
+                        .frame(maxWidth: .infinity)
                     }
                     
-                    // Right Team: Logo then Name
-                    VStack(spacing: 6) {
-                        Image(team2.logo, bundle: nil)
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 44, height: 44)
-                        Text(context.attributes.team2Name)
-                            .font(.system(size: 13, weight: .bold))
-                            .foregroundColor(team2.color)
-                    }
-                    .frame(maxWidth: .infinity)
+                    // Map Badge
+                    Text(context.state.mapName)
+                        .font(.system(size: 10, weight: .heavy))
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 3)
+                        .background(Capsule().fill(Color.white.opacity(0.15)))
+                        .padding(.bottom, 8)
                 }
-                
-                // Map Badge
-                Text(context.state.mapName)
-                    .font(.system(size: 10, weight: .heavy))
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 3)
-                    .background(Capsule().fill(Color.white.opacity(0.15)))
-                    .padding(.bottom, 8)
             }
             .activityBackgroundTint(Color.black.opacity(0.85))
             .activitySystemActionForegroundColor(Color.white)
@@ -86,7 +108,7 @@ struct CDLWidgetsLiveActivity: Widget {
             // ... (Dynamic Island code)
             DynamicIsland {
                 DynamicIslandExpandedRegion(.center) {
-                    Text(context.attributes.matchName.uppercased())
+                    Text("CDL".uppercased())
                         .font(.system(size: 11, weight: .bold))
                         .foregroundColor(.secondary)
                         .padding(.top, 5)
@@ -152,9 +174,8 @@ struct CDLWidgetsLiveActivity: Widget {
     "Dynamic Island Compact",
     as: .content,
     using: CDLAttributes(
-        matchName: "Major 1",
-        team1Name: "Los Angeles Thieves",
-        team2Name: "G2 Minnesota"
+        team1Name: "FaZe Vegas",
+        team2Name: "OpTic Texas"
     )
 ) {
     CDLWidgetsLiveActivity()
@@ -162,7 +183,7 @@ struct CDLWidgetsLiveActivity: Widget {
     CDLAttributes.ContentState(
         team1Score: 2,
         team2Score: 1,
-        mapName: "Hardpoint - Karachi"
+        mapName: "Hardpoint - Exposure"
     )
 }
 

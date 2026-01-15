@@ -58,7 +58,7 @@ struct ContentView: View {
             return
         }
 
-        let attributes = CDLAttributes(matchName: "Major 1 Finals",
+        let attributes = CDLAttributes(
         team1Name: "Toronto KOI",
         team2Name: "FaZe Vegas")
         let initialState = CDLAttributes.ContentState(team1Score: 2, team2Score: 1, mapName: "6-Star")
