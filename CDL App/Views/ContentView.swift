@@ -10,7 +10,12 @@ import ActivityKit
 struct ContentView: View {
     var body: some View {
         TabView {
-            // TAB 1: Live Activity Controls
+            // TAB 1: Schedule
+            ScheduleView()
+                .tabItem {
+                    Label("Schedule", systemImage: "calendar")
+                }
+            // TAB 2: Live Activity Controls
             VStack(spacing: 30) {
                 Text("CDL Match Control")
                     .font(.largeTitle)
@@ -23,7 +28,7 @@ struct ContentView: View {
                     .buttonStyle(.borderedProminent)
                     .controlSize(.large)
 
-                    // I added an Update button so you can test it changing!
+                    // Update button so you can test it changing!
                     Button("Update Score to 3-1") {
                         updateActivity()
                     }
@@ -41,7 +46,7 @@ struct ContentView: View {
                 Label("Live", systemImage: "bolt.fill")
             }
 
-            // TAB 2: Standings
+            // TAB 3: Standings
             StandingsView()
                 .tabItem {
                     Label("Standings", systemImage: "list.number")
@@ -49,10 +54,8 @@ struct ContentView: View {
         }
     }
 
-    // --- ALL FUNCTIONS MUST BE INSIDE THESE BRACES ---
-
     func startActivity() {
-        // 1. Check if the phone actually allows Live Activities
+        // 1. Check if the phone allows Live Activities
         guard ActivityAuthorizationInfo().areActivitiesEnabled else {
             print("❌ Error: Live Activities are disabled in iPhone Settings")
             return

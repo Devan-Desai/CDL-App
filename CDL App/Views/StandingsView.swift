@@ -85,7 +85,7 @@ struct StandingsView: View {
                                     .frame(width: 40)
                                     .fontWeight(.bold)
                                 
-                                Text("\(team.matchWins)-\(team.matchLosses)")
+                                Text("\(team.matchWins) - \(team.matchLosses)")
                                     .frame(width: 50)
                                     .foregroundColor(.secondary)
                             }
@@ -130,11 +130,11 @@ struct TeamDetailView: View {
                         }
                         VStack {
                             Text("\(team.matchWins)-\(team.matchLosses)").font(.headline)
-                            Text("Series W/L").font(.caption).foregroundColor(.secondary)
+                            Text("Series").font(.caption).foregroundColor(.secondary)
                         }
                         VStack {
                             Text("\(team.mapWins)-\(team.mapLosses)").font(.headline)
-                            Text("Map W/L").font(.caption).foregroundColor(.secondary)
+                            Text("Maps").font(.caption).foregroundColor(.secondary)
                         }
                     }
                 }
@@ -165,6 +165,9 @@ struct TeamDetailView: View {
                     }
                 }
             }
+            
+            // Team Schedule Section
+            TeamScheduleSection(team: team)
         }
         .navigationTitle(team.name)
         .navigationBarTitleDisplayMode(.inline)

@@ -174,8 +174,8 @@ struct CDLWidgetsLiveActivity: Widget {
     "Dynamic Island Compact",
     as: .content,
     using: CDLAttributes(
-        team1Name: "FaZe Vegas",
-        team2Name: "OpTic Texas"
+        team1Name: "Cloud9 New York",
+        team2Name: "Toronto KOI"
     )
 ) {
     CDLWidgetsLiveActivity()
