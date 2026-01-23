@@ -64,7 +64,7 @@ struct ContentView: View {
         let attributes = CDLAttributes(
         team1Name: "Toronto KOI",
         team2Name: "FaZe Vegas")
-        let initialState = CDLAttributes.ContentState(team1Score: 2, team2Score: 1, mapName: "6-Star")
+        let initialState = CDLAttributes.ContentState(team1Score: 2, team2Score: 1, mapName: "Exposure - Hardpoint")
         let content = ActivityContent(state: initialState, staleDate: nil)
         
         do {
