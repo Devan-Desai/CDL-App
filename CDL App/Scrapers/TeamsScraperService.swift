@@ -104,15 +104,6 @@ extension CDLRawTeam {
         
         // Team Color:
         let colorHex = teamColors.first (where: { $0.teamColorUsage == "Primary"})?.teamColorValue ?? "#FFFFFF"
-
-        // 🧩 YOUR TURN — Part B: build the roster.
-        // `roster` includes coaches and even a founder (Nadeshot on LA Thieves).
-        // Keep people whose role is "Player" or "Substitute", AND people with no
-        // role at all (role == nil — e.g. "Fire" on Carolina is a player but has no role).
-        // Then turn each RawPlayer into our Player struct.
-        // Hints: `.filter { raw in ... }` then `.map { raw in Player(id: raw.id, ...) }`
-        //        For the headshot: `raw.headshotPhotoUrl.flatMap { URL(string: $0) }`
-        // Build Roster:
         let players: [Player] = roster
             .filter { $0.role == "Player" || $0.role == "Substitute" || $0.role == nil}
             .map { raw in
