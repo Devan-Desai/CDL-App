@@ -296,7 +296,7 @@ struct TeamScheduleSection: View {
                             .padding(.vertical, 12)
                             .foregroundColor(selectedTab == .upcoming ? .white : .primary)
                     }
-                    .background(selectedTab == .upcoming ? Color.orange : Color.clear)
+                    .background(selectedTab == .upcoming ? team.color : Color.clear)
                     
                     Divider()
                     
@@ -311,7 +311,7 @@ struct TeamScheduleSection: View {
                             .padding(.vertical, 12)
                             .foregroundColor(selectedTab == .completed ? .white : .primary)
                     }
-                    .background(selectedTab == .completed ? Color.orange : Color.clear)
+                    .background(selectedTab == .completed ? team.color : Color.clear)
                 }
                 
                 Divider()

@@ -157,7 +157,7 @@ struct TeamDetailView: View {
                     ForEach(team.roster, id: \.self) { player in
                         HStack {
                             Image(systemName: "person.circle.fill")
-                                .foregroundColor(.orange)
+                                .foregroundColor(team.color)
                             Text(player)
                                 .font(.headline)
                         }

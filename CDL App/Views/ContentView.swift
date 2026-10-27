@@ -51,6 +51,12 @@ struct ContentView: View {
                 .tabItem {
                     Label("Standings", systemImage: "list.number")
                 }
+
+            // TAB 4: Teams (scraped from the CDL site)
+            TeamsView()
+                .tabItem {
+                    Label("Teams", systemImage: "person.3.fill")
+                }
         }
     }
 
