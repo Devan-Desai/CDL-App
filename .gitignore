@@ -1,0 +1,8 @@
+# macOS Finder files
+.DS_Store
+
+# Xcode: per-user settings and build output (these change constantly and differ per Mac)
+xcuserdata/
+*.xcuserstate
+DerivedData/
+build/

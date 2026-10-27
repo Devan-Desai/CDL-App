@@ -1,62 +1,41 @@
 //
-//  ContentView.swift
+//  LiveTestView.swift
 //  CDL App
 //
-//  Created by Devan Desai on 2026-01-06.
+//  The "Live" tab: buttons that start/update/end a Live Activity with FAKE data.
+//  In Phase 2 this is replaced by starting a Live Activity from a real match.
 //
+
 import SwiftUI
 import ActivityKit
 
-struct ContentView: View {
+struct LiveTestView: View {
     var body: some View {
-        TabView {
-            // TAB 1: Schedule
-            ScheduleView()
-                .tabItem {
-                    Label("Schedule", systemImage: "calendar")
+        VStack(spacing: 30) {
+            Text("CDL Match Control")
+                .font(.largeTitle)
+                .fontWeight(.bold)
+            
+            VStack(spacing: 15) {
+                Button("Start Live Scoreboard") {
+                    startActivity()
                 }
-            // TAB 2: Live Activity Controls
-            VStack(spacing: 30) {
-                Text("CDL Match Control")
-                    .font(.largeTitle)
-                    .fontWeight(.bold)
-                
-                VStack(spacing: 15) {
-                    Button("Start Live Scoreboard") {
-                        startActivity()
-                    }
-                    .buttonStyle(.borderedProminent)
-                    .controlSize(.large)
+                .buttonStyle(.borderedProminent)
+                .controlSize(.large)
 
-                    // Update button so you can test it changing!
-                    Button("Update Score to 3-1") {
-                        updateActivity()
-                    }
-                    .buttonStyle(.bordered)
-                    .tint(.orange)
-
-                    Button("End Match") {
-                        endActivity()
-                    }
-                    .buttonStyle(.bordered)
-                    .tint(.red)
+                // Update button so you can test it changing!
+                Button("Update Score to 3-1") {
+                    updateActivity()
                 }
+                .buttonStyle(.bordered)
+                .tint(.orange)
+
+                Button("End Match") {
+                    endActivity()
+                }
+                .buttonStyle(.bordered)
+                .tint(.red)
             }
-            .tabItem {
-                Label("Live", systemImage: "bolt.fill")
-            }
-
-            // TAB 3: Standings
-            StandingsView()
-                .tabItem {
-                    Label("Standings", systemImage: "list.number")
-                }
-
-            // TAB 4: Teams (scraped from the CDL site)
-            TeamsView()
-                .tabItem {
-                    Label("Teams", systemImage: "person.3.fill")
-                }
         }
     }
 

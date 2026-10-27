@@ -1,6 +1,9 @@
 //
-//  ScraperService.swift
+//  BreakingPointRosterScraper.swift  (was ScraperService.swift)
 //  CDL App
+//
+//  ⚠️ LEGACY: rosters from BreakingPoint. Its data is messy and we now get rosters
+//  from the official CDL teams page (TeamsScraperService). Delete in step 1.2.
 //
 //  Created by Devan Desai on 2026-01-08.
 //
@@ -9,7 +12,7 @@ import Foundation
 import SwiftSoup
 import Combine
 
-class ScraperService: ObservableObject {
+class BreakingPointRosterScraper: ObservableObject {
     @Published var standings: [TeamStanding] = []
     
     func fetchStandings() {

@@ -11,8 +11,6 @@ import SwiftUI
 @main
 struct CDLWidgetsBundle: WidgetBundle {
     var body: some Widget {
-        CDLWidgets()
-        CDLWidgetsControl()
         CDLWidgetsLiveActivity()
     }
 }
