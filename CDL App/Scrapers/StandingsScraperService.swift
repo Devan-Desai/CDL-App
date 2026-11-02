@@ -64,7 +64,9 @@ class StandingsScraperService: ObservableObject {
                             matchLosses: entry.standing.matchLoss,
                             mapWins: entry.standing.gameWin,
                             mapLosses: entry.standing.gameLoss,
-                            roster: [] // Roster data not in standings endpoint
+                            roster: [], // Roster data not in standings endpoint
+                            teamId: entry.teamCard.id,
+                            colorHex: nil  // the standings page has no colors; StandingsView fills this in
                         )
                     }
                     print("✅ Loaded \(self.standings.count) teams with standings data")
@@ -132,6 +134,7 @@ struct Standing: Codable {
 }
 
 struct TeamCard: Codable {
+    let id: Int
     let name: String
     let abbreviation: String
 }

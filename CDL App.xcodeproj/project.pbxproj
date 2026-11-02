@@ -50,7 +50,7 @@
 			membershipExceptions = (
 				Assets.xcassets,
 				"Shared/Color+Hex.swift",
-				"Shared/TeamTheme.swift",
+				Shared/TeamTheme.swift,
 			);
 			target = 07F9C5D12F0DBFF400A21704 /* CDLWidgetsExtension */;
 		};

@@ -15,8 +15,7 @@ CDL App/                         the iPhone app — Xcode includes every file in
 │   ├── CDLPageLoader            download a CDL page → its __NEXT_DATA__ JSON
 │   ├── TeamsScraperService      /en-us/teams      → [Team]
 │   ├── StandingsScraperService  /en-us/standings  → [TeamStanding]
-│   ├── ScheduleScraperService   /en-us/schedule   → [Match]   ⚠️ broken by the 2027 site update (step 1.3)
-│   └── BreakingPointRosterScraper                             ⚠️ legacy — delete in step 1.2
+│   └── ScheduleScraperService   /en-us/schedule   → [Match]   ⚠️ broken by the 2027 site update (step 1.3)
 ├── Views/                       one folder per tab
 │   ├── Schedule/  Standings/  Teams/  Live/
 │   └── Components/              small reusable pieces (TeamBadge)

@@ -8,16 +8,15 @@
 import SwiftUI
 
 struct StandingsView: View {
-    @StateObject var rosterScraper = BreakingPointRosterScraper()   // LEGACY — replaced in step 1.2
-    @StateObject var standingsScraper = StandingsScraperService()
-    
+    @StateObject var teamsScraper = TeamsScraperService()       // rosters + colors (CDL teams page)
+    @StateObject var standingsScraper = StandingsScraperService() // rank, points, W-L (CDL standings page)
+
+    /// Each standings row + its team's roster and color, matched by team ID.
     var mergedStandings: [TeamStanding] {
         standingsScraper.standings.map { standing in
-            // Find matching roster from rosterScraper
-            let roster = rosterScraper.standings.first(where: {
-                $0.name == standing.name
-            })?.roster ?? []
-            
+            // nil if the teams page hasn't finished loading yet
+            let team = teamsScraper.teamsByID[standing.teamId]
+
             return TeamStanding(
                 rank: standing.rank,
                 name: standing.name,
@@ -27,7 +26,9 @@ struct StandingsView: View {
                 matchLosses: standing.matchLosses,
                 mapWins: standing.mapWins,
                 mapLosses: standing.mapLosses,
-                roster: roster
+                roster: team?.roster.map(\.alias) ?? [],
+                teamId: standing.teamId,
+                colorHex: team?.primaryColorHex
             )
         }
     }
@@ -95,14 +96,16 @@ struct StandingsView: View {
                     .listStyle(PlainListStyle())
                     .refreshable {
                         standingsScraper.fetchStandings()
-                        rosterScraper.fetchStandings()
+                        await teamsScraper.fetchTeams()
                     }
                 }
             }
             .navigationTitle("CDL Standings")
             .onAppear {
                 standingsScraper.fetchStandings()
-                rosterScraper.fetchStandings()
+            }
+            .task {
+                await teamsScraper.fetchTeams()   // async, so it goes in .task (not .onAppear)
             }
         }
     }
