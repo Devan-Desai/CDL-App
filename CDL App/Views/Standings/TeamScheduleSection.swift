@@ -21,9 +21,9 @@ struct TeamScheduleSection: View {
     var displayedMatches: [Match] {
         switch selectedTab {
         case .upcoming:
-            return scheduleScraper.upcomingMatchesForTeam(team.name)
+            return scheduleScraper.upcomingMatchesForTeam(team.teamId)
         case .completed:
-            return scheduleScraper.completedMatchesForTeam(team.name)
+            return scheduleScraper.completedMatchesForTeam(team.teamId)
         }
     }
     
@@ -87,21 +87,21 @@ struct TeamScheduleSection: View {
                     .padding(.vertical, 40)
                 } else {
                     ForEach(displayedMatches) { match in
-                        MatchRowView(match: match, teamName: team.name)
+                        MatchRowView(match: match, teamId: team.teamId)
                             .padding(.vertical, 8)
                     }
                 }
             }
         }
-        .onAppear {
-            scheduleScraper.fetchSchedule()
+        .task {
+            await scheduleScraper.fetchSchedule()
         }
     }
 }
 
 struct MatchRowView: View {
     let match: Match
-    let teamName: String
+    let teamId: Int   // the team whose page this is — shown in bold
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -116,7 +116,7 @@ struct MatchRowView: View {
                     VStack(alignment: .leading, spacing: 4) {
                         Text(TeamTheme.theme(for: match.team1Name).shortName)
                             .font(.subheadline)
-                            .fontWeight(match.team1Name == teamName ? .bold : .regular)
+                            .fontWeight(match.team1Id == teamId ? .bold : .regular)
                             .foregroundColor(TeamTheme.theme(for: match.team1Name).color)
                         
                         if let score = match.team1Score {
@@ -142,7 +142,7 @@ struct MatchRowView: View {
                     VStack(alignment: .trailing, spacing: 4) {
                         Text(TeamTheme.theme(for: match.team2Name).shortName)
                             .font(.subheadline)
-                            .fontWeight(match.team2Name == teamName ? .bold : .regular)
+                            .fontWeight(match.team2Id == teamId ? .bold : .regular)
                             .foregroundColor(TeamTheme.theme(for: match.team2Name).color)
                         
                         if let score = match.team2Score {

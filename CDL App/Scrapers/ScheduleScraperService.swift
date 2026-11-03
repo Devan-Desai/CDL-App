@@ -2,234 +2,145 @@
 //  ScheduleScraperService.swift
 //  CDL App
 //
-//  Created by Devan Desai on 2026-01-15.
+//  Scrapes https://www.callofdutyleague.com/en-us/schedule and turns it into [Match].
+//  Rewritten Nov 1, 2026 for the 2027 site layout (step 1.3).
 //
 
 import Foundation
-import SwiftSoup
 import Combine
-import SwiftUI
 
 class ScheduleScraperService: ObservableObject {
     @Published var matches: [Match] = []
-    
-    func fetchSchedule() {
-        guard let url = URL(string: "https://callofdutyleague.com/en-us/schedule") else { return }
+    @Published var errorMessage: String?
 
-        URLSession.shared.dataTask(with: url) { data, _, _ in
-            guard let data = data, let html = String(data: data, encoding: .utf8) else { return }
+    func fetchSchedule() async {
+        do {
+            let json = try await CDLPageLoader.nextData(path: "schedule")
 
-            do {
-                let doc: Document = try SwiftSoup.parse(html)
-                guard let scriptTag = try doc.select("script#__NEXT_DATA__").first() else { return }
-                
-                let jsonData = scriptTag.data().data(using: .utf8)!
-                
-                let decoder = JSONDecoder()
-                decoder.keyDecodingStrategy = .convertFromSnakeCase
-                
-                let decoded = try decoder.decode(CDLScheduleResponse.self, from: jsonData)
-                
-                var allMatches: [Match] = []
-                var seenMatchIds = Set<String>()
-                
-                // First, get ALL matches from the detailed schedule data (both completed and upcoming)
-                if let containerBlock = decoded.props.pageProps.blocks.first(where: { $0.cdlContainerBlockList != nil }),
-                   let items = containerBlock.cdlContainerBlockList?.items.first(where: { $0.default == true }),
-                   let tabBlocks = items.blocks,
-                   let tabsBlock = tabBlocks.first(where: { $0.tabs != nil }),
-                   let tabs = tabsBlock.tabs?.tabs.first(where: { $0.openDefault == true }),
-                   let scheduleBlocks = tabs.blocks,
-                   let entireSeasonBlock = scheduleBlocks.first(where: { $0.cdlEntireSeasonMatchCards != nil }) {
-                    
-                    let matchCards = entireSeasonBlock.cdlEntireSeasonMatchCards
-                    
-                    // Process completed matches
-                    if let completedData = matchCards?.completedMatches {
-                        for section in completedData {
-                            for matchEntry in section.matches {
-                                let matchId = "\(matchEntry.match.id)"
-                                
-                                if !seenMatchIds.contains(matchId) {
-                                    seenMatchIds.insert(matchId)
-                                    
-                                    let team1Name = matchEntry.homeTeamCard.name
-                                    let team2Name = matchEntry.awayTeamCard.name
-                                    let team1Score = matchEntry.result?.homeTeamGamesWon
-                                    let team2Score = matchEntry.result?.awayTeamGamesWon
-                                    
-                                    allMatches.append(Match(
-                                        id: matchId,
-                                        team1Name: team1Name,
-                                        team2Name: team2Name,
-                                        team1Logo: TeamTheme.theme(for: team1Name).logo,
-                                        team2Logo: TeamTheme.theme(for: team2Name).logo,
-                                        team1Score: team1Score,
-                                        team2Score: team2Score,
-                                        date: Date(timeIntervalSince1970: TimeInterval(matchEntry.match.playTime)),
-                                        isCompleted: matchEntry.match.status == "COMPLETED",
-                                        matchTitle: nil
-                                    ))
-                                }
-                            }
-                        }
-                    }
-                    
-                    // Process upcoming matches
-                    if let upcomingData = matchCards?.upcomingMatches {
-                        for section in upcomingData {
-                            for matchEntry in section.matches {
-                                let matchId = "\(matchEntry.match.id)"
-                                
-                                if !seenMatchIds.contains(matchId) {
-                                    seenMatchIds.insert(matchId)
-                                    
-                                    let team1Name = matchEntry.homeTeamCard.name
-                                    let team2Name = matchEntry.awayTeamCard.name
-                                    
-                                    allMatches.append(Match(
-                                        id: matchId,
-                                        team1Name: team1Name,
-                                        team2Name: team2Name,
-                                        team1Logo: TeamTheme.theme(for: team1Name).logo,
-                                        team2Logo: TeamTheme.theme(for: team2Name).logo,
-                                        team1Score: nil,
-                                        team2Score: nil,
-                                        date: Date(timeIntervalSince1970: TimeInterval(matchEntry.match.playTime)),
-                                        isCompleted: false,
-                                        matchTitle: nil
-                                    ))
-                                }
-                            }
-                        }
-                    }
-                }
-                
-                DispatchQueue.main.async {
-                    self.matches = allMatches.sorted { $0.date > $1.date }
-                    print("✅ Loaded \(self.matches.count) total matches (\(self.matches.filter { $0.isCompleted }.count) completed, \(self.matches.filter { !$0.isCompleted }.count) upcoming)")
-                }
-            } catch {
-                print("❌ Schedule decoding error: \(error)")
+            // Grab every "cdlMatchCards" block, wherever it sits among the tabs.
+            let blocks = try JSONFinder.findAll(key: "cdlMatchCards", in: json)
+
+            var all: [Match] = []
+            for block in blocks {
+                let cards = try JSONDecoder().decode(CDLMatchCards.self, from: block)
+                all += cards.allMatches
             }
-        }.resume()
-    }
-    
-    // Get matches for a specific team
-    func matchesForTeam(_ teamName: String) -> [Match] {
-        matches.filter { match in
-            match.team1Name == teamName || match.team2Name == teamName
+
+            // The same match can show up in more than one block — keep each ID once.
+            var seen = Set<Int>()
+            matches = all
+                .filter { seen.insert($0.id).inserted }
+                .sorted { $0.date < $1.date }
+
+            errorMessage = blocks.isEmpty ? "Couldn't find any matches on the CDL schedule page." : nil
+            print("✅ [Schedule] Loaded \(matches.count) matches from \(blocks.count) blocks")
+            for match in matches.prefix(3) {
+                print("   #\(match.id) \(match.shortDisplayDate) [\(match.status.rawValue)] \(match.team1Name) vs \(match.team2Name)")
+            }
+        } catch {
+            errorMessage = "Couldn't load the schedule: \(error.localizedDescription)"
+            print("❌ [Schedule] \(error)")
         }
     }
-    
-    // Get completed matches for a team (sorted newest first)
-    func completedMatchesForTeam(_ teamName: String) -> [Match] {
-        matchesForTeam(teamName)
+
+    // MARK: Matches for one team — matched by CDL team ID, never by name
+
+    func matchesForTeam(_ teamId: Int) -> [Match] {
+        matches.filter { $0.team1Id == teamId || $0.team2Id == teamId }
+    }
+
+    /// Newest first
+    func completedMatchesForTeam(_ teamId: Int) -> [Match] {
+        matchesForTeam(teamId)
             .filter { $0.isCompleted }
             .sorted { $0.date > $1.date }
     }
-    
-    // Get upcoming matches for a team (sorted soonest first)
-    func upcomingMatchesForTeam(_ teamName: String) -> [Match] {
-        matchesForTeam(teamName)
+
+    /// Soonest first
+    func upcomingMatchesForTeam(_ teamId: Int) -> [Match] {
+        matchesForTeam(teamId)
             .filter { !$0.isCompleted }
             .sorted { $0.date < $1.date }
     }
 }
 
-// MARK: - Schedule Response Models
-struct CDLScheduleResponse: Codable {
-    let props: CDLScheduleProps
+// MARK: - Raw JSON from the CDL schedule page
+//
+// Each "cdlMatchCards" block sorts its matches into four lists by state.
+// Which list a match is in tells us its status — more reliable than guessing
+// the website's status words.
+//
+//   { "liveMatches": [], "preScheduledMatches": [ … ], "upcomingMatches": [], "finalMatches": [], "count": 5 }
+
+struct CDLMatchCards: Decodable {
+    let liveMatches: [CDLScheduleEntry]?
+    let preScheduledMatches: [CDLScheduleEntry]?
+    let upcomingMatches: [CDLScheduleEntry]?
+    let finalMatches: [CDLScheduleEntry]?
+
+    /// Every match in this block, labelled with the list it came from.
+    var allMatches: [Match] {
+        var result: [Match] = []
+        result += (preScheduledMatches ?? []).map { $0.toMatch(status: .preScheduled) }
+        result += (upcomingMatches ?? []).map { $0.toMatch(status: .upcoming) }
+        result += (liveMatches ?? []).map { $0.toMatch(status: .live) }
+        result += (finalMatches ?? []).map { $0.toMatch(status: .final) }
+        return result
+    }
 }
 
-struct CDLScheduleProps: Codable {
-    let pageProps: CDLSchedulePageProps
+/// One match in a list. Right now (Nov 2026) every Kickoff match looks like:
+///   { "match": { "id": 13467, "playTime": 1796414400, "status": "PRESCHEDULED" }, ... }
+/// Once teams are decided, it also gets team cards and (after it's played) a result —
+/// same shape as last season's matches:
+///   "homeTeamCard": { "id": 69, "name": "Los Angeles Thieves", "abbreviation": "LAT", ... },
+///   "awayTeamCard": { "id": 9,  "name": "Miami Heretics", ... },
+///   "result":       { "homeTeamGamesWon": 3, "awayTeamGamesWon": 1, "winnerTeamId": 69 }
+struct CDLScheduleEntry: Decodable {
+    let match: Info
+    let homeTeamCard: TeamCardRef?   // nil until the teams are decided
+    let awayTeamCard: TeamCardRef?
+    let result: Score?               // nil until there's a score
+
+    struct Info: Decodable {
+        let id: Int
+        let playTime: Int            // seconds since Jan 1 1970 (a "Unix timestamp")
+        let status: String           // "PRESCHEDULED", "COMPLETED", …
+    }
+    struct TeamCardRef: Decodable {
+        let id: Int
+        let name: String
+    }
+    struct Score: Decodable {
+        let homeTeamGamesWon: Int?
+        let awayTeamGamesWon: Int?
+    }
 }
 
-struct CDLSchedulePageProps: Codable {
-    let blocks: [CDLScheduleBlock]
-}
+// MARK: - Raw → clean conversion
 
-struct CDLScheduleBlock: Codable {
-    let cdlHeader: CDLScheduleHeader?
-    let cdlContainerBlockList: CDLScheduleContainerBlockList?
-    let tabs: CDLScheduleTabs?
-    let cdlEntireSeasonMatchCards: CDLEntireSeasonMatchCards?
-}
+extension CDLScheduleEntry {
+    func toMatch(status: MatchStatus) -> Match {
+        let team1Id: Int? = homeTeamCard?.id
+        let team1Name = homeTeamCard?.name ?? "TBD"
+        let team1Score: Int? = result?.homeTeamGamesWon
 
-struct CDLScheduleContainerBlockList: Codable {
-    let items: [CDLScheduleContainerItem]
-}
+        let team2Id: Int? = awayTeamCard?.id
+        let team2Name = awayTeamCard?.name ?? "TBD"
+        let team2Score: Int? = result?.awayTeamGamesWon
 
-struct CDLScheduleContainerItem: Codable {
-    let `default`: Bool
-    let blocks: [CDLScheduleBlock]?
-}
-
-struct CDLScheduleTabs: Codable {
-    let tabs: [CDLScheduleTab]
-}
-
-struct CDLScheduleTab: Codable {
-    let openDefault: Bool
-    let blocks: [CDLScheduleBlock]?
-}
-
-struct CDLEntireSeasonMatchCards: Codable {
-    let upcomingMatches: [CDLMatchSection]?
-    let completedMatches: [CDLMatchSection]?
-}
-
-struct CDLMatchSection: Codable {
-    let matches: [CDLDetailedMatch]
-}
-
-struct CDLDetailedMatch: Codable {
-    let homeTeamCard: CDLTeamCard
-    let awayTeamCard: CDLTeamCard
-    let match: CDLMatchInfo
-    let result: CDLMatchResult?
-}
-
-struct CDLMatchResult: Codable {
-    let homeTeamGamesWon: Int?
-    let awayTeamGamesWon: Int?
-}
-
-struct CDLTeamCard: Codable {
-    let name: String
-}
-
-struct CDLMatchInfo: Codable {
-    let id: Int
-    let playTime: Int
-    let status: String
-}
-
-struct CDLScheduleHeader: Codable {
-    let scoreStripList: CDLScoreStripList?
-}
-
-struct CDLScoreStripList: Codable {
-    let scoreStrip: CDLScoreStrip?
-}
-
-struct CDLScoreStrip: Codable {
-    let matches: [CDLMatchData]?
-}
-
-struct CDLMatchData: Codable {
-    let status: String
-    let link: String
-    let date: CDLMatchDate
-    let competitors: [CDLCompetitor]
-}
-
-struct CDLMatchDate: Codable {
-    let startTime: Int
-}
-
-struct CDLCompetitor: Codable {
-    let longName: String
-    let score: Int?
+        return Match(
+            id: match.id,
+            date: Date(timeIntervalSince1970: TimeInterval(match.playTime)),
+            status: status,
+            team1Id: team1Id,
+            team1Name: team1Name,
+            team1Logo: TeamTheme.theme(for: team1Name).logo,
+            team1Score: team1Score,
+            team2Id: team2Id,
+            team2Name: team2Name,
+            team2Logo: TeamTheme.theme(for: team2Name).logo,
+            team2Score: team2Score
+        )
+    }
 }

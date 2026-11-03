@@ -35,22 +35,8 @@ struct StandingsView: View {
 
     var body: some View {
         NavigationView {
-            VStack {
-                // Header Row
-                HStack {
-                    Text("RANK").frame(width: 40, alignment: .leading)
-                    Text("TEAM").frame(maxWidth: .infinity, alignment: .leading)
-                    Text("PTS").frame(width: 40)
-                    Text("W-L").frame(width: 50)
-                }
-                .font(.caption.bold())
-                .foregroundColor(.gray)
-                .padding(.horizontal)
-                
-                Divider()
-                
+            Group {
                 if standingsScraper.standings.isEmpty {
-                    Spacer()
                     VStack(spacing: 20) {
                         ProgressView()
                             .progressViewStyle(CircularProgressViewStyle(tint: .orange))
@@ -58,39 +44,44 @@ struct StandingsView: View {
                         Text("Loading Live CDL Data...")
                             .foregroundColor(.secondary)
                     }
-                    Spacer()
                 } else {
-                    List(mergedStandings) { team in
-                        NavigationLink(destination: TeamDetailView(team: team)) {
-                            HStack {
-                                // Rank
-                                Text("\(team.rank)")
-                                    .font(.system(.body, design: .monospaced))
-                                    .fontWeight(.bold)
-                                    .frame(width: 30)
+                    List {
+                        Section {
+                            ForEach(mergedStandings) { team in
+                                NavigationLink(destination: TeamDetailView(team: team)) {
+                                    HStack {
+                                        // Rank
+                                        Text("\(team.rank)")
+                                            .font(.system(.body, design: .monospaced))
+                                            .fontWeight(.bold)
+                                            .frame(width: 30)
                                 
-                                // Team Info
-                                HStack {
-                                    Image(team.logo)
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(width: 30, height: 30)
+                                        // Team Info
+                                        HStack {
+                                            Image(team.logo)
+                                                .resizable()
+                                                .scaledToFit()
+                                                .frame(width: 30, height: 30)
                                     
-                                    Text(team.name)
-                                        .fontWeight(.medium)
+                                            Text(team.name)
+                                                .fontWeight(.medium)
+                                        }
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                
+                                        // Stats
+                                        Text("\(team.points)")
+                                            .frame(width: 40)
+                                            .fontWeight(.bold)
+                                
+                                        Text("\(team.matchWins) - \(team.matchLosses)")
+                                            .frame(width: 50)
+                                            .foregroundColor(.secondary)
+                                    }
+                                    .padding(.vertical, 4)
                                 }
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                
-                                // Stats
-                                Text("\(team.points)")
-                                    .frame(width: 40)
-                                    .fontWeight(.bold)
-                                
-                                Text("\(team.matchWins) - \(team.matchLosses)")
-                                    .frame(width: 50)
-                                    .foregroundColor(.secondary)
                             }
-                            .padding(.vertical, 4)
+                        } header: {
+                            columnHeaders
                         }
                     }
                     .listStyle(PlainListStyle())
@@ -108,6 +99,21 @@ struct StandingsView: View {
                 await teamsScraper.fetchTeams()   // async, so it goes in .task (not .onAppear)
             }
         }
+    }
+
+    /// The RANK / TEAM / PTS / W-L column titles.
+    /// They live INSIDE the list as its section header, so they scroll together with the
+    /// rows, stick to the top while you scroll, and the big "CDL Standings" title can't
+    /// slide through them when you pull to refresh (it could when they sat above the list).
+    private var columnHeaders: some View {
+        HStack {
+            Text("RANK").frame(width: 40, alignment: .leading)
+            Text("TEAM").frame(maxWidth: .infinity, alignment: .leading)
+            Text("PTS").frame(width: 40)
+            Text("W-L").frame(width: 50)
+        }
+        .font(.caption.bold())
+        .foregroundColor(.gray)
     }
 }
 

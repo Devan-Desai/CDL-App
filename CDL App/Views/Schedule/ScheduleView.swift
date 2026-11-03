@@ -74,16 +74,18 @@ struct ScheduleView: View {
                     }
                     .listStyle(InsetGroupedListStyle())
                     .refreshable {
-                        scheduleScraper.fetchSchedule()
                         standingsScraper.fetchStandings()
+                        await scheduleScraper.fetchSchedule()
                     }
                 }
             }
             .navigationTitle("CDL Schedule")
             .navigationBarTitleDisplayMode(.inline)
             .onAppear {
-                scheduleScraper.fetchSchedule()
                 standingsScraper.fetchStandings()
+            }
+            .task {
+                await scheduleScraper.fetchSchedule()
             }
         }
     }
@@ -124,15 +126,10 @@ struct FullScheduleMatchRow: View {
                     .fontWeight(.semibold)
                     .foregroundColor(.primary)
                 
-                if match.isCompleted {
-                    Text("Final")
-                        .font(.caption2)
-                        .foregroundColor(.secondary)
-                } else {
-                    Text("Upcoming")
-                        .font(.caption2)
-                        .foregroundColor(.secondary)
-                }
+                Text(match.status.label)
+                    .font(.caption2)
+                    .fontWeight(match.status == .live ? .bold : .regular)
+                    .foregroundColor(match.status == .live ? .red : .secondary)
             }
             .frame(width: 60)
             
@@ -158,7 +155,7 @@ struct FullScheduleMatchRow: View {
                             .font(.headline)
                             .fontWeight(.bold)
                             .foregroundColor(scoreColor(for: match.team1Name))
-                    } else if let record = getTeamRecord(teamName: match.team1Name) {
+                    } else if let record = getTeamRecord(teamId: match.team1Id) {
                         // Show record for upcoming matches
                         Text(record)
                             .font(.caption)
@@ -184,7 +181,7 @@ struct FullScheduleMatchRow: View {
                             .font(.headline)
                             .fontWeight(.bold)
                             .foregroundColor(scoreColor(for: match.team2Name))
-                    } else if let record = getTeamRecord(teamName: match.team2Name) {
+                    } else if let record = getTeamRecord(teamId: match.team2Id) {
                         // Show record for upcoming matches
                         Text(record)
                             .font(.caption)
@@ -216,8 +213,10 @@ struct FullScheduleMatchRow: View {
         }
     }
     
-    private func getTeamRecord(teamName: String) -> String? {
-        guard let team = standings.first(where: { $0.name == teamName }) else {
+    /// "W - L" for a team, found by CDL team ID (nil for TBD teams)
+    private func getTeamRecord(teamId: Int?) -> String? {
+        guard let teamId,
+              let team = standings.first(where: { $0.teamId == teamId }) else {
             return nil
         }
         return "\(team.matchWins) - \(team.matchLosses)"
