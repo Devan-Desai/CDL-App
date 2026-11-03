@@ -138,10 +138,7 @@ struct FullScheduleMatchRow: View {
             // Match Info
             VStack(spacing: 8) {
                 HStack {
-                    Image(match.team1Logo)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 24, height: 24)
+                    TeamLogo(assetName: match.team1Logo, size: 24)
                     
                     Text(match.team1Name)
                         .font(.subheadline)
@@ -164,10 +161,7 @@ struct FullScheduleMatchRow: View {
                 }
                 
                 HStack {
-                    Image(match.team2Logo)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 24, height: 24)
+                    TeamLogo(assetName: match.team2Logo, size: 24)
                     
                     Text(match.team2Name)
                         .font(.subheadline)

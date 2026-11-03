@@ -108,10 +108,7 @@ struct MatchRowView: View {
             HStack {
                 // Team 1
                 HStack(spacing: 8) {
-                    Image(match.team1Logo)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 24, height: 24)
+                    TeamLogo(assetName: match.team1Logo, size: 24)
                     
                     VStack(alignment: .leading, spacing: 4) {
                         Text(TeamTheme.theme(for: match.team1Name).shortName)
@@ -153,10 +150,7 @@ struct MatchRowView: View {
                         }
                     }
                     
-                    Image(match.team2Logo)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 24, height: 24)
+                    TeamLogo(assetName: match.team2Logo, size: 24)
                 }
             }
             

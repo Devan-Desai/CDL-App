@@ -58,10 +58,7 @@ struct StandingsView: View {
                                 
                                         // Team Info
                                         HStack {
-                                            Image(team.logo)
-                                                .resizable()
-                                                .scaledToFit()
-                                                .frame(width: 30, height: 30)
+                                            TeamLogo(assetName: team.logo, size: 30)
                                     
                                             Text(team.name)
                                                 .fontWeight(.medium)

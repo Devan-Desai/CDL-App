@@ -14,10 +14,7 @@ struct TeamDetailView: View {
         List {
             Section {
                 VStack(alignment: .center, spacing: 10) {
-                    Image(team.logo)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 100, height: 100)
+                    TeamLogo(assetName: team.logo, size: 100)
                     
                     Text(team.name)
                         .font(.title).bold()

@@ -20,6 +20,15 @@ class TeamsScraperService: ObservableObject {
     }
 
     func fetchTeams() async {
+        // 1️⃣ Show the copy saved last time straight away, so the screen isn't empty
+        //    while we download (and still has teams if we're offline).
+        //    Only when nothing is on screen yet — no point replacing fresher data.
+        if teams.isEmpty, let saved = DataCache.load([Team].self, from: "teams") {
+            teams = saved
+            lastUpdated = DataCache.savedDate(of: "teams")
+            print("📦 [Teams] Showing \(saved.count) saved teams while downloading fresh ones")
+        }
+
         do {
             let json = try await CDLPageLoader.nextData(path: "teams")
             let page = try JSONDecoder().decode(CDLTeamsPage.self, from: json)
@@ -38,13 +47,20 @@ class TeamsScraperService: ObservableObject {
             lastUpdated = Date()
             errorMessage = nil
 
+            // 2️⃣ Save the fresh copy for next time.
+            DataCache.save(teams, as: "teams")
+
             print("✅ [Teams] Loaded \(teams.count) teams")
             for team in teams {
                 let roster = team.roster.map(\.alias).joined(separator: ", ")
                 print("   #\(team.id) \(team.abbreviation) \(team.fullName) \(team.primaryColorHex) — \(roster)")
             }
         } catch {
-            errorMessage = "Couldn't load teams: \(error.localizedDescription)"
+            // 3️⃣ If saved teams are already on screen, a failed refresh isn't a disaster —
+            //    say so gently instead of showing a scary error.
+            errorMessage = teams.isEmpty
+                ? "Couldn't load teams: \(error.localizedDescription)"
+                : "Couldn't refresh — showing saved teams."
             print("❌ [Teams] \(error)")
         }
     }

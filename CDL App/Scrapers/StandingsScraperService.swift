@@ -21,6 +21,12 @@ class StandingsScraperService: ObservableObject {
     @Published var standings: [TeamStanding] = []
     
     func fetchStandings() {
+        // Show the standings saved last time while we download (same idea as fetchTeams()).
+        if standings.isEmpty, let saved = DataCache.load([TeamStanding].self, from: "standings") {
+            standings = saved
+            print("📦 [Standings] Showing \(saved.count) saved rows while downloading fresh ones")
+        }
+
         guard let url = URL(string: "https://callofdutyleague.com/en-us/standings") else { return }
 
         URLSession.shared.dataTask(with: url) { data, _, _ in
@@ -69,6 +75,7 @@ class StandingsScraperService: ObservableObject {
                             colorHex: nil  // the standings page has no colors; StandingsView fills this in
                         )
                     }
+                    DataCache.save(self.standings, as: "standings")   // save the fresh copy for next time
                     print("✅ Loaded \(self.standings.count) teams with standings data")
                 }
             } catch {

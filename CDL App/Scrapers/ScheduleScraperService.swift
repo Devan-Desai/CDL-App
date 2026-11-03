@@ -14,6 +14,10 @@ class ScheduleScraperService: ObservableObject {
     @Published var errorMessage: String?
 
     func fetchSchedule() async {
+        if matches.isEmpty, let saved = DataCache.load([Match].self, from: "matches") {
+            matches = saved
+            print("📦 [Matches] Showing \(saved.count) saved matches while downloading fresh ones")
+        }
         do {
             let json = try await CDLPageLoader.nextData(path: "schedule")
 
@@ -33,12 +37,16 @@ class ScheduleScraperService: ObservableObject {
                 .sorted { $0.date < $1.date }
 
             errorMessage = blocks.isEmpty ? "Couldn't find any matches on the CDL schedule page." : nil
+            DataCache.save(matches, as: "matches")
+
             print("✅ [Schedule] Loaded \(matches.count) matches from \(blocks.count) blocks")
             for match in matches.prefix(3) {
                 print("   #\(match.id) \(match.shortDisplayDate) [\(match.status.rawValue)] \(match.team1Name) vs \(match.team2Name)")
             }
         } catch {
-            errorMessage = "Couldn't load the schedule: \(error.localizedDescription)"
+            errorMessage = matches.isEmpty
+                ? "Couldn't load the schedule: \(error.localizedDescription)"
+                : "Couldn't refresh — showing saved schedule."
             print("❌ [Schedule] \(error)")
         }
     }
