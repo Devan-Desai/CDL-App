@@ -15,6 +15,7 @@ struct CDL_AppApp: App {
     @StateObject private var teams = TeamsScraperService()
     @StateObject private var standings = StandingsScraperService()
     @StateObject private var schedule = ScheduleScraperService()
+    @StateObject private var live = LiveActivityController()    // the Lock Screen scoreboard
 
     var body: some Scene {
         WindowGroup {
@@ -24,6 +25,7 @@ struct CDL_AppApp: App {
                 .environmentObject(teams)
                 .environmentObject(standings)
                 .environmentObject(schedule)
+                .environmentObject(live)
                 // Load everything once at launch. (Each shows its saved copy first — step 1.4.)
                 .task {
                     standings.fetchStandings()
@@ -43,5 +45,6 @@ extension View {
             .environmentObject(TeamsScraperService())
             .environmentObject(StandingsScraperService())
             .environmentObject(ScheduleScraperService())
+            .environmentObject(LiveActivityController())
     }
 }

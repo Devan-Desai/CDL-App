@@ -11,6 +11,7 @@ import SwiftUI
 struct MatchDetailView: View {
     let match: Match                        // what the schedule already knows — shown while the page loads
     @EnvironmentObject var teams: TeamsScraperService
+    @EnvironmentObject var live: LiveActivityController
 
     @State private var detail: MatchDetail?
     @State private var message: String?     // "not published yet" or an error
@@ -24,6 +25,8 @@ struct MatchDetailView: View {
             Section("Maps") {
                 mapsSection
             }
+
+            liveSection
 
             if let vod = detail?.vodURL {
                 Section {
@@ -106,6 +109,48 @@ struct MatchDetailView: View {
             if let current = detail.currentMap { return "LIVE · MAP \(current.number)" }
         }
         return match.status.label.uppercased()
+    }
+
+    // MARK: Live Activity
+
+    @ViewBuilder
+    private var liveSection: some View {
+        if let detail, !detail.isFinal {
+            Section {
+                if live.followedMatchId == match.id {
+                    Button(role: .destructive) {
+                        live.stop()
+                    } label: {
+                        Label("Stop following", systemImage: "stop.circle")
+                    }
+                } else {
+                    Button {
+                        live.follow(matchId: match.id, teams: teams)
+                    } label: {
+                        Label("Follow on Lock Screen", systemImage: "bolt.fill")
+                    }
+                }
+                if let status = live.status {
+                    Text(status).font(.footnote).foregroundColor(.secondary)
+                }
+            } footer: {
+                Text("Updates every 30 seconds while the app is open.")
+            }
+        } else if let detail, detail.isFinal, !detail.playedMaps.isEmpty {
+            Section {
+                Button {
+                    live.replay(matchId: match.id, teams: teams)
+                } label: {
+                    Label("Replay on Lock Screen", systemImage: "play.circle")
+                }
+                .disabled(live.isReplaying)
+                if let status = live.status {
+                    Text(status).font(.footnote).foregroundColor(.secondary)
+                }
+            } footer: {
+                Text("Plays the match back map by map — a quick way to see the Live Activity.")
+            }
+        }
     }
 
     // MARK: Maps

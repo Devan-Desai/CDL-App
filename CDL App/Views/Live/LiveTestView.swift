@@ -2,82 +2,60 @@
 //  LiveTestView.swift
 //  CDL App
 //
-//  The "Live" tab: buttons that start/update/end a Live Activity with FAKE data.
-//  In Phase 2 this is replaced by starting a Live Activity from a real match.
+//  The "Live" tab. Before the season starts there are no live matches, so this
+//  replays a REAL finished match (LA Thieves 3–1 Miami Heretics, last season) on the
+//  Lock Screen, map by map, using the same code that follows a live match.
 //
 
 import SwiftUI
-import ActivityKit
 
 struct LiveTestView: View {
+    @EnvironmentObject var live: LiveActivityController
+    @EnvironmentObject var teams: TeamsScraperService
+
+    /// callofdutyleague.com/en-us/match/13100 — LAT 3–1 MIA, April 2026
+    private let sampleMatchId = 13100
+
     var body: some View {
-        VStack(spacing: 30) {
-            Text("CDL Match Control")
-                .font(.largeTitle)
-                .fontWeight(.bold)
-            
-            VStack(spacing: 15) {
-                Button("Start Live Scoreboard") {
-                    startActivity()
+        NavigationView {
+            List {
+                Section {
+                    Button {
+                        live.replay(matchId: sampleMatchId, teams: teams)
+                    } label: {
+                        Label("Replay LAT vs MIA (last season)", systemImage: "play.circle.fill")
+                    }
+                    .disabled(live.isReplaying)
+
+                    Button(role: .destructive) {
+                        live.stop()
+                    } label: {
+                        Label("End Live Activity", systemImage: "stop.circle")
+                    }
+                } header: {
+                    Text("Test the Live Activity")
+                } footer: {
+                    Text("Plays a real finished match back map by map (about a minute). Lock the phone — ⌘L in the Simulator — to watch it on the Lock Screen.")
                 }
-                .buttonStyle(.borderedProminent)
-                .controlSize(.large)
 
-                // Update button so you can test it changing!
-                Button("Update Score to 3-1") {
-                    updateActivity()
+                if let status = live.status {
+                    Section("Status") {
+                        Text(status)
+                    }
                 }
-                .buttonStyle(.bordered)
-                .tint(.orange)
 
-                Button("End Match") {
-                    endActivity()
+                Section {
+                    Text("To follow a real match, open it from the Schedule tab and tap “Follow on Lock Screen”. The season starts Dec 4.")
+                        .font(.footnote)
+                        .foregroundColor(.secondary)
                 }
-                .buttonStyle(.bordered)
-                .tint(.red)
             }
+            .navigationTitle("Live")
         }
     }
+}
 
-    func startActivity() {
-        // 1. Check if the phone allows Live Activities
-        guard ActivityAuthorizationInfo().areActivitiesEnabled else {
-            print("❌ Error: Live Activities are disabled in iPhone Settings")
-            return
-        }
-
-        let attributes = CDLAttributes(
-        team1Name: "Toronto KOI",
-        team2Name: "FaZe Vegas")
-        let initialState = CDLAttributes.ContentState(team1Score: 2, team2Score: 1, mapName: "Exposure - Hardpoint")
-        let content = ActivityContent(state: initialState, staleDate: nil)
-        
-        do {
-            let activity = try Activity<CDLAttributes>.request(attributes: attributes, content: content)
-            print("✅ Activity Started! ID: \(activity.id)")
-            print("👉 SWIPE UP TO HOME OR LOCK YOUR SCREEN TO SEE IT")
-        } catch {
-            print("❌ Error starting activity: \(error.localizedDescription)")
-        }
-    }
-
-    func updateActivity() {
-        Task {
-            for activity in Activity<CDLAttributes>.activities {
-                let updatedState = CDLAttributes.ContentState(team1Score: 3, team2Score: 1, mapName: "Raid")
-                let content = ActivityContent(state: updatedState, staleDate: nil)
-                await activity.update(content)
-                print("✅ Score updated to 3-1")
-            }
-        }
-    }
-
-    func endActivity() {
-        Task {
-            for activity in Activity<CDLAttributes>.activities {
-                await activity.end(nil, dismissalPolicy: .immediate)
-                print("✅ Activity ended")
-            }
-        }
-    }
+#Preview {
+    LiveTestView()
+        .withPreviewData()
 }
