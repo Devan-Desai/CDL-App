@@ -65,10 +65,13 @@ struct ScheduleView: View {
                         ForEach(groupedMatchesByDate(), id: \.key) { dateGroup in
                             Section(header: Text(dateGroup.key)) {
                                 ForEach(dateGroup.value) { match in
-                                    FullScheduleMatchRow(
-                                        match: match,
-                                        standings: standingsScraper.standings
-                                    )
+                                    // Tap a match → its detail page (map-by-map results)
+                                    NavigationLink(destination: MatchDetailView(match: match)) {
+                                        FullScheduleMatchRow(
+                                            match: match,
+                                            standings: standingsScraper.standings
+                                        )
+                                    }
                                 }
                             }
                         }
