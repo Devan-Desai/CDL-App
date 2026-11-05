@@ -19,6 +19,13 @@ class TeamsScraperService: ObservableObject {
         Dictionary(teams.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
     }
 
+    /// The team with this ID — or nil for a TBD team (no ID yet) or an ID we don't know.
+    /// Example:  team(withId: 17)?.abbreviation  →  "TOR"
+    func team(withId id: Int?) -> Team? {
+        guard let id else { return nil }
+        return teamsByID[id]
+    }
+
     func fetchTeams() async {
         // 1️⃣ Show the copy saved last time straight away, so the screen isn't empty
         //    while we download (and still has teams if we're offline).

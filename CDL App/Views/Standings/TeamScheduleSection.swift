@@ -11,7 +11,7 @@ import SwiftUI
 // MARK: - Team Detail Schedule Section
 struct TeamScheduleSection: View {
     let team: TeamStanding
-    @StateObject var scheduleScraper = ScheduleScraperService()
+    @EnvironmentObject var scheduleScraper: ScheduleScraperService   // shared — no more downloading the whole schedule for every team page
     @State private var selectedTab: ScheduleTab = .upcoming
     
     enum ScheduleTab {
@@ -93,15 +93,13 @@ struct TeamScheduleSection: View {
                 }
             }
         }
-        .task {
-            await scheduleScraper.fetchSchedule()
-        }
     }
 }
 
 struct MatchRowView: View {
     let match: Match
     let teamId: Int   // the team whose page this is — shown in bold
+    @EnvironmentObject var teams: TeamsScraperService   // the app's shared teams (scraped, by ID)
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -111,10 +109,11 @@ struct MatchRowView: View {
                     TeamLogo(assetName: match.team1Logo, size: 24)
                     
                     VStack(alignment: .leading, spacing: 4) {
-                        Text(TeamTheme.theme(for: match.team1Name).shortName)
+                        // Scraped team, found by ID (TBD → gray "TBD")
+                        Text(teams.team(withId: match.team1Id)?.abbreviation ?? "TBD")
                             .font(.subheadline)
                             .fontWeight(match.team1Id == teamId ? .bold : .regular)
-                            .foregroundColor(TeamTheme.theme(for: match.team1Name).color)
+                            .foregroundColor(teams.team(withId: match.team1Id)?.primaryColor ?? .secondary)
                         
                         if let score = match.team1Score {
                             Text("\(score)")
@@ -137,10 +136,10 @@ struct MatchRowView: View {
                 // Team 2
                 HStack(spacing: 8) {
                     VStack(alignment: .trailing, spacing: 4) {
-                        Text(TeamTheme.theme(for: match.team2Name).shortName)
+                        Text(teams.team(withId: match.team2Id)?.abbreviation ?? "TBD")
                             .font(.subheadline)
                             .fontWeight(match.team2Id == teamId ? .bold : .regular)
-                            .foregroundColor(TeamTheme.theme(for: match.team2Name).color)
+                            .foregroundColor(teams.team(withId: match.team2Id)?.primaryColor ?? .secondary)
                         
                         if let score = match.team2Score {
                             Text("\(score)")

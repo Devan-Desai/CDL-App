@@ -9,7 +9,7 @@
 import SwiftUI
 
 struct TeamsView: View {
-    @StateObject private var scraper = TeamsScraperService()
+    @EnvironmentObject var scraper: TeamsScraperService   // the app's shared copy (see CDL_AppApp)
 
     var body: some View {
         NavigationStack {
@@ -42,13 +42,13 @@ struct TeamsView: View {
                 }
             }
             .navigationTitle("Teams")
-            .task { await scraper.fetchTeams() }        // runs once when the screen appears
-            .refreshable { await scraper.fetchTeams() } // pull down to reload
+            .refreshable { await scraper.fetchTeams() } // pull down to reload (the app loads it at launch)
         }
     }
 }
 
 #Preview {
     TeamsView()
+        .withPreviewData()
         .preferredColorScheme(.dark)
 }

@@ -8,8 +8,9 @@
 import SwiftUI
 
 struct ScheduleView: View {
-    @StateObject var scheduleScraper = ScheduleScraperService()
-    @StateObject var standingsScraper = StandingsScraperService()
+    // The app's shared copies (created once in CDL_AppApp):
+    @EnvironmentObject var scheduleScraper: ScheduleScraperService
+    @EnvironmentObject var standingsScraper: StandingsScraperService
     @State private var selectedFilter: ScheduleFilter = .upcoming
     
     enum ScheduleFilter: String, CaseIterable {
@@ -81,12 +82,6 @@ struct ScheduleView: View {
             }
             .navigationTitle("CDL Schedule")
             .navigationBarTitleDisplayMode(.inline)
-            .onAppear {
-                standingsScraper.fetchStandings()
-            }
-            .task {
-                await scheduleScraper.fetchSchedule()
-            }
         }
     }
     
@@ -220,6 +215,7 @@ struct FullScheduleMatchRow: View {
 struct ScheduleView_Previews: PreviewProvider {
     static var previews: some View {
         ScheduleView()
+            .withPreviewData()
             .preferredColorScheme(.dark)
     }
 }

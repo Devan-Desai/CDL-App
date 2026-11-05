@@ -8,8 +8,9 @@
 import SwiftUI
 
 struct StandingsView: View {
-    @StateObject var teamsScraper = TeamsScraperService()       // rosters + colors (CDL teams page)
-    @StateObject var standingsScraper = StandingsScraperService() // rank, points, W-L (CDL standings page)
+    // The app's shared copies (created once in CDL_AppApp):
+    @EnvironmentObject var teamsScraper: TeamsScraperService          // rosters + colors (CDL teams page)
+    @EnvironmentObject var standingsScraper: StandingsScraperService  // rank, points, W-L (CDL standings page)
 
     /// Each standings row + its team's roster and color, matched by team ID.
     var mergedStandings: [TeamStanding] {
@@ -89,12 +90,6 @@ struct StandingsView: View {
                 }
             }
             .navigationTitle("CDL Standings")
-            .onAppear {
-                standingsScraper.fetchStandings()
-            }
-            .task {
-                await teamsScraper.fetchTeams()   // async, so it goes in .task (not .onAppear)
-            }
         }
     }
 
@@ -117,6 +112,7 @@ struct StandingsView: View {
 struct StandingsView_Previews: PreviewProvider {
     static var previews: some View {
         StandingsView()
+            .withPreviewData()
             .preferredColorScheme(.dark)
     }
 }
