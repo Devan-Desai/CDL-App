@@ -12,7 +12,6 @@ struct TeamStanding: Identifiable, Codable {
     let id = UUID()
     let rank: Int
     let name: String
-    let logo: String
     let points: Int
     let matchWins: Int
     let matchLosses: Int
@@ -24,11 +23,13 @@ struct TeamStanding: Identifiable, Codable {
 }
 
 extension TeamStanding {
-    /// The team's color: the scraped one when we have it, otherwise the old hard-coded one.
+    /// The team's color (scraped), or gray until the teams page has loaded.
     var color: Color {
-        if let hex = colorHex {
-            return Color(hex: hex)
-        }
-        return TeamTheme.theme(for: name).color
+        Color(hex: colorHex ?? "#8E8E93")
+    }
+
+    /// Black or white — whichever reads best on top of `color`.
+    var textOnColor: Color {
+        Color.readableText(onHex: colorHex ?? "#8E8E93")
     }
 }

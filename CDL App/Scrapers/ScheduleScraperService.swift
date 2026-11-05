@@ -143,11 +143,9 @@ extension CDLScheduleEntry {
             status: status,
             team1Id: team1Id,
             team1Name: team1Name,
-            team1Logo: TeamTheme.theme(for: team1Name).logo,
             team1Score: team1Score,
             team2Id: team2Id,
             team2Name: team2Name,
-            team2Logo: TeamTheme.theme(for: team2Name).logo,
             team2Score: team2Score
         )
     }

@@ -32,12 +32,10 @@ struct Match: Identifiable, Codable {
 
     let team1Id: Int?         // CDL team ID; nil while the team is TBD
     let team1Name: String     // "TBD" until decided
-    let team1Logo: String
     let team1Score: Int?      // maps won; nil until there's a score
 
     let team2Id: Int?
     let team2Name: String
-    let team2Logo: String
     let team2Score: Int?
 
     var isCompleted: Bool { status == .final }

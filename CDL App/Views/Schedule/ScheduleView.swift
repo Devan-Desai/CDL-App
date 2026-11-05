@@ -133,7 +133,7 @@ struct FullScheduleMatchRow: View {
             // Match Info
             VStack(spacing: 8) {
                 HStack {
-                    TeamLogo(assetName: match.team1Logo, size: 24)
+                    TeamLogo(teamId: match.team1Id, size: 24)
                     
                     Text(match.team1Name)
                         .font(.subheadline)
@@ -156,7 +156,7 @@ struct FullScheduleMatchRow: View {
                 }
                 
                 HStack {
-                    TeamLogo(assetName: match.team2Logo, size: 24)
+                    TeamLogo(teamId: match.team2Id, size: 24)
                     
                     Text(match.team2Name)
                         .font(.subheadline)

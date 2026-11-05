@@ -3,7 +3,7 @@
 //  CDL App
 //
 //  Scrapes https://www.callofdutyleague.com/en-us/teams and turns it into [Team].
-//  Replaces the hard-coded list in TeamTheme.swift (which still says "Boston Breach").
+//  Replaced the old hard-coded, name-based TeamTheme list.
 //
 
 import Foundation

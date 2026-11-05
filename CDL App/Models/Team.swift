@@ -22,7 +22,7 @@ struct Team: Identifiable, Codable, Hashable {
     let logoURL: URL?           // official logo (an SVG file) — see the roadmap's logo/licensing notes
     let roster: [Player]
 
-    var primaryColor: Color { Color(hex: primaryColorHex) }   // Color(hex:) lives in TeamTheme.swift
+    var primaryColor: Color { Color(hex: primaryColorHex) }   // Color(hex:) lives in Shared/Color+Hex.swift
 }
 
 struct Player: Identifiable, Codable, Hashable {

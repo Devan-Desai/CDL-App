@@ -20,8 +20,7 @@ struct TeamBadge: View {
             .overlay {
                 Text(team.abbreviation)
                     .font(.system(size: size * 0.32, weight: .heavy, design: .rounded))
-                    .foregroundStyle(.white)
-                    .shadow(radius: 1)   // keeps white text readable on bright colors like M80's
+                    .foregroundStyle(Color.readableText(onHex: team.primaryColorHex))   // black on bright colors, white on dark
                     .minimumScaleFactor(0.5)
                     .lineLimit(1)
                     .padding(4)

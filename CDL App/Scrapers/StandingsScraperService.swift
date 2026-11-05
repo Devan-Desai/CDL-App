@@ -58,13 +58,9 @@ class StandingsScraperService: ObservableObject {
                 
                 DispatchQueue.main.async {
                     self.standings = standingsData.map { entry in
-                        let teamName = entry.teamCard.name
-                        let theme = TeamTheme.theme(for: teamName)
-                        
                         return TeamStanding(
                             rank: entry.standing.rank,
-                            name: teamName,
-                            logo: theme.logo,
+                            name: entry.teamCard.name,
                             points: entry.standing.cdlPoints,
                             matchWins: entry.standing.matchWin,
                             matchLosses: entry.standing.matchLoss,

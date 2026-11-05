@@ -21,7 +21,6 @@ struct StandingsView: View {
             return TeamStanding(
                 rank: standing.rank,
                 name: standing.name,
-                logo: standing.logo,
                 points: standing.points,
                 matchWins: standing.matchWins,
                 matchLosses: standing.matchLosses,
@@ -59,7 +58,7 @@ struct StandingsView: View {
                                 
                                         // Team Info
                                         HStack {
-                                            TeamLogo(assetName: team.logo, size: 30)
+                                            TeamLogo(teamId: team.teamId, size: 30)
                                     
                                             Text(team.name)
                                                 .fontWeight(.medium)

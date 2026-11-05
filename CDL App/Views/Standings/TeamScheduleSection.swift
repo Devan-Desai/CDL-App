@@ -41,7 +41,7 @@ struct TeamScheduleSection: View {
                             .fontWeight(selectedTab == .upcoming ? .bold : .regular)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 12)
-                            .foregroundColor(selectedTab == .upcoming ? .white : .primary)
+                            .foregroundColor(selectedTab == .upcoming ? team.textOnColor : .primary)
                     }
                     .background(selectedTab == .upcoming ? team.color : Color.clear)
                     
@@ -56,7 +56,7 @@ struct TeamScheduleSection: View {
                             .fontWeight(selectedTab == .completed ? .bold : .regular)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 12)
-                            .foregroundColor(selectedTab == .completed ? .white : .primary)
+                            .foregroundColor(selectedTab == .completed ? team.textOnColor : .primary)
                     }
                     .background(selectedTab == .completed ? team.color : Color.clear)
                 }
@@ -106,7 +106,7 @@ struct MatchRowView: View {
             HStack {
                 // Team 1
                 HStack(spacing: 8) {
-                    TeamLogo(assetName: match.team1Logo, size: 24)
+                    TeamLogo(teamId: match.team1Id, size: 24)
                     
                     VStack(alignment: .leading, spacing: 4) {
                         // Scraped team, found by ID (TBD → gray "TBD")
@@ -149,7 +149,7 @@ struct MatchRowView: View {
                         }
                     }
                     
-                    TeamLogo(assetName: match.team2Logo, size: 24)
+                    TeamLogo(teamId: match.team2Id, size: 24)
                 }
             }
             
