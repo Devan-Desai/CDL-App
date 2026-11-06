@@ -3,7 +3,8 @@
 An **unofficial** iPhone app for following the Call of Duty League, with Live Activities
 (Lock Screen + Dynamic Island) in the style of Apple Sports.
 
-The plan, roadmap and walkthroughs live in the Claude Project docs.
+Start with `CLAUDE.md` (how to work on this project), then `docs/ROADMAP.md` (plan, data-source notes, status)
+and `docs/PHASE-2-WALKTHROUGH.md` (what changed in Phase 2 and why).
 
 ## Project map
 
