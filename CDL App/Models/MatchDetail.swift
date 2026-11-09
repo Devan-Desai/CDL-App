@@ -76,6 +76,7 @@ struct MapResult: Identifiable {
         case "Hardpoint": return "HP"
         case "Search & Destroy": return "SND"
         case "Overload": return "OVL"
+        case "Hijack": return "HJK"
         case "Control": return "CTL"
         default: return mode ?? ""
         }
