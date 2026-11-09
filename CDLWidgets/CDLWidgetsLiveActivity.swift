@@ -436,7 +436,7 @@ extension CDLAttributes {
     /// Two bright colors with badges: the hardest case for readable text.
     static let previewBright = CDLAttributes(
         matchId: 1,
-        team1: Side(abbreviation: "TX", colorHex: "#93C852", logoAsset: nil, record: "2–2"),
+        team1: Side(abbreviation: "TX", colorHex: "#92C951", logoAsset: nil, record: "2–2"),
         team2: Side(abbreviation: "BOS", colorHex: "#D6FF01", logoAsset: nil, record: "3–1")
     )
 }
