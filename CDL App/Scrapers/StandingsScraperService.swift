@@ -19,7 +19,19 @@ import Combine
 
 class StandingsScraperService: ObservableObject {
     @Published var standings: [TeamStanding] = []
-    
+
+    /// CDL team ID → series record in the latest Major that has results, e.g. [6: "3–1"].
+    /// Empty until a Major has been played (checked Nov 9: the Major tabs exist but are empty).
+    @Published var majorRecords: [Int: String] = [:]
+
+    /// The record to show next to a team: its Major record if the site has one, else its
+    /// season record (series W–L), else nil.
+    func record(forTeamId id: Int) -> String? {
+        if let major = majorRecords[id] { return major }
+        guard let row = standings.first(where: { $0.teamId == id }) else { return nil }
+        return "\(row.matchWins)–\(row.matchLosses)"
+    }
+
     func fetchStandings() {
         // Show the standings saved last time while we download (same idea as fetchTeams()).
         if standings.isEmpty, let saved = DataCache.load([TeamStanding].self, from: "standings") {
@@ -55,8 +67,20 @@ class StandingsScraperService: ObservableObject {
                     print("❌ Could not navigate to standings data")
                     return
                 }
-                
+
+                // The same tab bar also has one tab per Major ("MAJOR I", "TORONTO KOI MAJOR III", …).
+                // Use the last Major where at least one series has been played.
+                let majorTabs = (tabsBlock.tabs?.tabs ?? []).filter { ($0.title ?? "").uppercased().contains("MAJOR") }
+                let latestMajor = majorTabs
+                    .compactMap { tab in tab.blocks?.first(where: { $0.cdlProStandings != nil })?.cdlProStandings?.standings }
+                    .last { rows in rows.contains { $0.standing.matchWin + $0.standing.matchLoss > 0 } }
+                var majorRecords: [Int: String] = [:]
+                for entry in latestMajor ?? [] {
+                    majorRecords[entry.teamCard.id] = "\(entry.standing.matchWin)–\(entry.standing.matchLoss)"
+                }
+
                 DispatchQueue.main.async {
+                    self.majorRecords = majorRecords
                     self.standings = standingsData.map { entry in
                         return TeamStanding(
                             rank: entry.standing.rank,
@@ -114,6 +138,7 @@ struct CDLTabs: Codable {
 }
 
 struct CDLTab: Codable {
+    let title: String?          // "Regular Season", "MAJOR I", …
     let openDefault: Bool
     let blocks: [CDLBlock]?
 }

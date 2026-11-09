@@ -48,6 +48,12 @@ struct MatchDetail {
         playedMaps.isEmpty ? (seriesTeam2 ?? 0) : playedMaps.filter { $0.winnerTeamId == team2.id }.count
     }
 
+    /// Maps a team needs to win the series: the match page lists one slot per map,
+    /// so 5 slots = best of 5 = first to 3. Bo7 → 4, Bo9 → 5. No slots → assume Bo5.
+    var mapsToWin: Int {
+        maps.isEmpty ? 3 : (maps.count + 1) / 2
+    }
+
     /// Maps to show: the ones played, plus the current one during a live match.
     var visibleMaps: [MapResult] {
         maps.filter { $0.winnerTeamId != nil || $0.id == currentMap?.id }
