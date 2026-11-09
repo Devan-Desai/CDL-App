@@ -12,6 +12,7 @@ import SwiftUI
 struct LiveTestView: View {
     @EnvironmentObject var live: LiveActivityController
     @EnvironmentObject var teams: TeamsScraperService
+    @EnvironmentObject var standings: StandingsScraperService
 
     /// callofdutyleague.com/en-us/match/13100 — LAT 3–1 MIA, April 2026
     private let sampleMatchId = 13100
@@ -21,7 +22,7 @@ struct LiveTestView: View {
             List {
                 Section {
                     Button {
-                        live.replay(matchId: sampleMatchId, teams: teams)
+                        live.replay(matchId: sampleMatchId, teams: teams, standings: standings)
                     } label: {
                         Label("Replay LAT vs MIA (last season)", systemImage: "play.circle.fill")
                     }

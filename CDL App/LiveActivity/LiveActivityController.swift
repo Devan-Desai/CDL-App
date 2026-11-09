@@ -29,7 +29,7 @@ class LiveActivityController: ObservableObject {
 
     // MARK: Follow a real match
 
-    func follow(matchId: Int, teams: TeamsScraperService) {
+    func follow(matchId: Int, teams: TeamsScraperService, standings: StandingsScraperService) {
         guard ActivityAuthorizationInfo().areActivitiesEnabled else {
             status = "Live Activities are turned off for this app in Settings."
             return
@@ -52,7 +52,7 @@ class LiveActivityController: ObservableObject {
                         await activity.update(content)
                     } else {
                         activity = try Activity<CDLAttributes>.request(
-                            attributes: Self.attributes(for: detail, teams: teams),
+                            attributes: Self.attributes(for: detail, teams: teams, standings: standings),
                             content: content)
                     }
 
@@ -75,7 +75,7 @@ class LiveActivityController: ObservableObject {
 
     // MARK: Replay a finished match (testing)
 
-    func replay(matchId: Int, teams: TeamsScraperService) {
+    func replay(matchId: Int, teams: TeamsScraperService, standings: StandingsScraperService) {
         guard ActivityAuthorizationInfo().areActivitiesEnabled else {
             status = "Live Activities are turned off for this app in Settings."
             return
@@ -94,7 +94,7 @@ class LiveActivityController: ObservableObject {
                     return
                 }
                 let activity = try Activity<CDLAttributes>.request(
-                    attributes: Self.attributes(for: detail, teams: teams),
+                    attributes: Self.attributes(for: detail, teams: teams, standings: standings),
                     content: ActivityContent(state: first, staleDate: nil))
                 status = "Replaying \(detail.team1.abbreviation) vs \(detail.team2.abbreviation) — lock the phone to watch."
 
@@ -136,38 +136,48 @@ class LiveActivityController: ObservableObject {
 
     // MARK: Match page → Live Activity data
 
-    /// The fixed part: each team's abbreviation, color and logo.
-    static func attributes(for detail: MatchDetail, teams: TeamsScraperService) -> CDLAttributes {
+    /// The fixed part: each team's abbreviation, color, logo and record.
+    static func attributes(for detail: MatchDetail,
+                           teams: TeamsScraperService,
+                           standings: StandingsScraperService) -> CDLAttributes {
         CDLAttributes(matchId: detail.id,
-                      team1: side(for: detail.team1, teams: teams),
-                      team2: side(for: detail.team2, teams: teams))
+                      team1: side(for: detail.team1, teams: teams, standings: standings),
+                      team2: side(for: detail.team2, teams: teams, standings: standings))
     }
 
-    private static func side(for side: MatchDetail.Side, teams: TeamsScraperService) -> CDLAttributes.Side {
+    private static func side(for side: MatchDetail.Side,
+                             teams: TeamsScraperService,
+                             standings: StandingsScraperService) -> CDLAttributes.Side {
         // Prefer the teams page (same abbreviations/colors as the rest of the app), else the match page.
         let team = teams.team(withId: side.id)
         return CDLAttributes.Side(
             abbreviation: team?.abbreviation ?? side.abbreviation,
             colorHex: team?.primaryColorHex ?? side.colorHex ?? "#8E8E93",
-            logoAsset: TeamLogos.assetName(forTeamId: side.id))
+            logoAsset: TeamLogos.assetName(forTeamId: side.id),
+            record: standings.record(forTeamId: side.id))
     }
 
-    /// The changing part: series score + the map being played (or the last one, once it's over).
+    /// The changing part. Three situations:
+    ///  • final       → the last map played (for the "MAP 4 · HARDPOINT · 250–197" line)
+    ///  • a map slot without a winner → that map: LIVE if it has a score, UP NEXT if not
+    ///  • nothing listed yet → UP NEXT for the map after the ones played (name unknown)
     static func state(from detail: MatchDetail) -> CDLAttributes.ContentState {
-        let map = detail.currentMap ?? detail.playedMaps.last
+        let map = detail.isFinal ? detail.playedMaps.last : detail.currentMap
         return CDLAttributes.ContentState(
             team1Maps: detail.team1MapsWon,
             team2Maps: detail.team2MapsWon,
-            mapNumber: map?.number ?? 0,
+            mapNumber: map?.number ?? detail.playedMaps.count + 1,
             mapName: map?.mapName ?? "",
             modeName: map?.mode ?? "",
             shortMode: map?.shortMode ?? "",
             team1MapScore: map?.team1Score,
             team2MapScore: map?.team2Score,
+            mapsToWin: detail.mapsToWin,
             isFinal: detail.isFinal)
     }
 
-    /// A finished match as a little "film": for every map — kick-off, halfway, final score.
+    /// A finished match as a little "film". For every map: up next (no score yet),
+    /// halfway, then the final map score with the series updated.
     /// LAT 3–1 MIA (4 maps) becomes 13 frames, about 50 seconds at 4 seconds each.
     static func replayFrames(for detail: MatchDetail) -> [CDLAttributes.ContentState] {
         var frames: [CDLAttributes.ContentState] = []
@@ -176,7 +186,8 @@ class LiveActivityController: ObservableObject {
         for map in detail.playedMaps {
             let final1 = map.team1Score ?? 0
             let final2 = map.team2Score ?? 0
-            let steps = [(0, 0), (final1 / 2, final2 / 2), (final1, final2)]   // kick-off, halfway, final
+            // nil = no score yet (up next); then halfway; then the final score
+            let steps: [(Int, Int)?] = [nil, (final1 / 2, final2 / 2), (final1, final2)]
             for (step, scores) in steps.enumerated() {
                 if step == 2 {   // the map just ended → count it in the series score
                     if map.winnerTeamId == detail.team1.id { won1 += 1 }
@@ -189,8 +200,9 @@ class LiveActivityController: ObservableObject {
                     mapName: map.mapName ?? "",
                     modeName: map.mode ?? "",
                     shortMode: map.shortMode,
-                    team1MapScore: scores.0,
-                    team2MapScore: scores.1,
+                    team1MapScore: scores?.0,
+                    team2MapScore: scores?.1,
+                    mapsToWin: detail.mapsToWin,
                     isFinal: false))
             }
         }

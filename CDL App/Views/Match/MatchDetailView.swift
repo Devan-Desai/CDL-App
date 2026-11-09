@@ -11,6 +11,7 @@ import SwiftUI
 struct MatchDetailView: View {
     let match: Match                        // what the schedule already knows — shown while the page loads
     @EnvironmentObject var teams: TeamsScraperService
+    @EnvironmentObject var standings: StandingsScraperService   // team records for the Live Activity
     @EnvironmentObject var live: LiveActivityController
 
     @State private var detail: MatchDetail?
@@ -125,7 +126,7 @@ struct MatchDetailView: View {
                     }
                 } else {
                     Button {
-                        live.follow(matchId: match.id, teams: teams)
+                        live.follow(matchId: match.id, teams: teams, standings: standings)
                     } label: {
                         Label("Follow on Lock Screen", systemImage: "bolt.fill")
                     }
@@ -139,7 +140,7 @@ struct MatchDetailView: View {
         } else if let detail, detail.isFinal, !detail.playedMaps.isEmpty {
             Section {
                 Button {
-                    live.replay(matchId: match.id, teams: teams)
+                    live.replay(matchId: match.id, teams: teams, standings: standings)
                 } label: {
                     Label("Replay on Lock Screen", systemImage: "play.circle")
                 }
