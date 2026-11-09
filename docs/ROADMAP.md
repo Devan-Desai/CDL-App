@@ -3,7 +3,7 @@
 > Copied from the Claude Project ("CDL Live Activities App") on Nov 6, 2026 so Claude Code can read it.
 > The Project keeps a copy too: if you update one, update the other.
 
-*Written Oct 26, 2026; updated Nov 6. Season 2027 (Modern Warfare 4) starts with the Major I Kickoff Tournament, Fri Dec 4, 2026, 3:00 PM ET.*
+*Written Oct 26, 2026; updated Nov 9. Season 2027 (Modern Warfare 4) starts with the Major I Kickoff Tournament, Fri Dec 4, 2026, 3:00 PM ET.*
 
 ---
 
@@ -12,10 +12,11 @@
 **App (SwiftUI, iOS 26.2, Xcode synchronized folders)**
 - Tabs: Schedule, Live, Standings, Teams. Tapping a match in Schedule opens its match page (map-by-map results).
 - Live Activity (Lock Screen + Dynamic Island) now runs on **real match data**. You can follow a match (updates every 30 s while the app is open) or replay a finished match to test.
+- **Redesigned Live Activity (Nov 9, branch `live-activity-redesign`)**: the live map's score in the middle, series dots (first to 3/4/5), team records, Saira fonts, three background styles (`LiveBackgroundStyle`: blend / split / accent; blend is the default). Built to be the mock-up in the data-access pitch to the CDL / BreakingPoint.
 - Repo: `github.com/Devan-Desai/CDL-App`.
-  - `origin/main` = 1.4 (offline cache).
-  - Local `main` = 1.5 (shared stores).
-  - Branch `phase-2` = five more commits (Nov 4) + these docs (Nov 6). **Not built yet** and **not pushed**.
+  - `origin/main` = Phase 2, built and tested (merged + pushed Nov 9).
+  - `monster-test` (pushed): debug-only test that follows BreakingPoint matches (Monster Invitational, Nov 6). Not merged; it also holds the `HJK` short name for Hijack.
+  - `live-activity-redesign` (local, not pushed): the redesign above.
 - Git flow: work on a branch → merge into `main` (pull request, or local merge + `git push origin main`) → `git pull` → start the next branch from `main`.
 - Learning notes: `docs/PHASE-2-WALKTHROUGH.md` explains each Nov 4 commit.
 
@@ -37,7 +38,7 @@ CDLWidgets/      Live Activity UI (CDLAttributes + Lock Screen/Dynamic Island)
 | Scraper | Source | Status |
 |---|---|---|
 | `TeamsScraperService` | CDL `/en-us/teams` | ✅ All 12 teams with colors and rosters. Shared app-wide (1.5). |
-| `StandingsScraperService` | CDL `/en-us/standings` | ✅ 2027 season (all 0–0). Team IDs. |
+| `StandingsScraperService` | CDL `/en-us/standings` | ✅ 2027 season (all 0–0). Team IDs. Since Nov 9 also reads Major records (`record(forTeamId:)`), falling back to the season record. |
 | `ScheduleScraperService` | CDL `/en-us/schedule` | ✅ 34 Kickoff matches (Dec 4–13), all TBD vs TBD. |
 | `MatchDetailService` | CDL `/en-us/match/{id}` | ✅ New (2.1). Series + map-by-map; "not published yet" for TBD matches. |
 
@@ -54,7 +55,7 @@ All CDL pages are built with Next.js and carry their data as JSON in `<script id
 | Page | What's in it | Where in the JSON |
 |---|---|---|
 | `/en-us/teams` | Team ID, full name, location, name, abbreviation, colors, logo URLs (SVG), roster (alias, real name, role, headshot) | `blocks[] → cdlTeamListV3 → teams[]` |
-| `/en-us/standings` | Rank, CDL points, series W-L, map W-L, `teamCard {id, name, abbreviation, logos}`; season tabs 2020–2027 | `… → cdlProStandings → standings[]` |
+| `/en-us/standings` | Rank, CDL points, series W-L, map W-L, `teamCard {id, name, abbreviation, logos}`; season tabs 2020–2027; inside 2027 one tab per stage: "Regular Season" (open), "MAJOR I"–"MAJOR IV", "POST SEASON" | `… → cdlProStandings → standings[]` |
 | `/en-us/schedule` | Grouped by Major → tournament → `cdlMatchCards` with `liveMatches`, `preScheduledMatches`, `upcomingMatches`, `finalMatches` | found with `JSONFinder` |
 | `/en-us/match/{id}` | `matchExtended` (team cards with id/name/abbreviation/color, match {id, playTime, status, vodLink}, result) + `matchGamesExtended` (per map: number, map, mode, `matchGameResult {hostGameScore, guestGameScore, winnerTeamId}`) + `matchStats` | `blocks[] → cdlMatchDetail → matchData` |
 | BreakingPoint | Deeper stats; an internal API the site itself calls (`/api/trpc/cached.matches.fetchLiveMatches`, `fetchUpcomingMatches`) | not public |
@@ -62,6 +63,10 @@ All CDL pages are built with Next.js and carry their data as JSON in `<script id
 **Schedule page notes (Nov 1):**
 - The server only fills in the default-open tab; `?season=2026` doesn't load past seasons.
 - Pre-scheduled entries have no team cards. Once teams are known they're expected to gain `homeTeamCard` / `awayTeamCard` / `result`. **Confirm when the Kickoff matchups are announced.**
+
+**Standings page notes (Nov 9):** the Major tabs exist but have no rows yet (only the open tab is filled by the server). The app uses the last Major tab with any series played; until then it shows the season record. **Check on Kickoff weekend** whether Major I gets rows, or becomes the open tab.
+
+**BreakingPoint notes (Monster Invitational test, Nov 6):** match pages are Next.js with `__NEXT_DATA__` (`initialMatchState`). Status words `upcoming` / `live` / `complete`. Their own team IDs (differ from the CDL's, e.g. 11 = G2 there, Gentle Mates here). Finished maps only: in 73 samples no map appeared until it ended, so no live map score. Pages are cached copies, on average ~3.5 min old, up to 12 min.
 
 **Match page notes (Nov 4, sampled ~35 pages):**
 - **host = home team** on 33/33 maps.
@@ -149,7 +154,10 @@ What this means:
 - [x] 2.2 New `ActivityAttributes` (abbreviation/color/logo per team; series + current-map state)
 - [x] 2.3 Follow a match (30 s polling while open) + Replay a finished match
 - [x] 2.4 Logo-free fallback badges, readable text, logo on/off switch
-- [ ] 2.5 **← NEXT.** Build, fix any compile errors, test the replay on the Simulator and a real phone, then push
+- [x] 2.5 Built (no errors), tested follow on a live BreakingPoint match and the replay in the Simulator, merged + pushed (Nov 9). Still to do: test on a real phone.
+- [x] 2.6 Live Activity redesign (Nov 9): map score in the center, series dots, records, Saira fonts, three backgrounds. Simulator-tested with the replay.
+  - **Caveat:** the status line says LIVE only when the current map has a score. If CDL match pages don't show a score during a map (unknown until Dec 4, see §2), it will say "UP NEXT" for the whole map. Fix then, e.g. with the match status.
+- [ ] 2.7 **← NEXT.** Pick the background (blend / split / accent), take mock-up screenshots, write the pitch email (Phase 5)
 
 ### Phase 3 — Live test: Kickoff weekend (Dec 4–6)
 - [ ] Save snapshots of schedule + match pages during live matches (real status words, live map scores, update speed)
@@ -173,4 +181,5 @@ What this means:
 - **Logos:** logo-free permanently, or ask for permission? (Switch exists either way.)
 - **Server language:** Swift (Vapor) or JavaScript (Cloudflare Workers)?
 - **Minimum iOS version:** currently 26.2. Lowering to 18 would reach more people; broadcast Live Activity push needs iOS 18+ anyway.
+- **Live Activity background:** blend (default), split or accent? One line: `LiveBackgroundStyle.current`.
 - **What to build before Dec 4:** a snapshot recorder for Kickoff weekend, schedule auto-refresh while live, favourite teams, server groundwork, permission emails.

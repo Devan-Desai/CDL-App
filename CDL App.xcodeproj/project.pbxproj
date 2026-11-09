@@ -50,7 +50,7 @@
 			membershipExceptions = (
 				Assets.xcassets,
 				"Shared/Color+Hex.swift",
-				"Shared/Fonts/OFL.txt",
+				Shared/Fonts/OFL.txt,
 				"Shared/Fonts/SairaCondensed-Bold.ttf",
 				"Shared/Fonts/SairaCondensed-SemiBold.ttf",
 				"Shared/Fonts/SairaSemiCondensed-Bold.ttf",
@@ -85,8 +85,8 @@
 		07F9C5A22F0DBF1400A21704 /* CDL App */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				074DCDF12F101C5200FE5452 /* Exceptions for "CDL App" folder in "CDLWidgetsExtension" target */,
 				0A11F0A12F20000000C0FFEE /* Exceptions for "CDL App" folder in "CDL App" target */,
+				074DCDF12F101C5200FE5452 /* Exceptions for "CDL App" folder in "CDLWidgetsExtension" target */,
 			);
 			path = "CDL App";
 			sourceTree = "<group>";
