@@ -154,7 +154,7 @@ struct LiveSeriesScore: View {
     var body: some View {
         HStack(spacing: size * 0.25) {
             Text("\(state.team1Maps)")
-            Text("-")
+            Text(" - ")
                 .font(.system(size: size * 0.5, weight: .bold))
                 .opacity(0.8)
             Text("\(state.team2Maps)")
