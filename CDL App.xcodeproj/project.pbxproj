@@ -50,6 +50,11 @@
 			membershipExceptions = (
 				Assets.xcassets,
 				"Shared/Color+Hex.swift",
+				"Shared/Fonts/OFL.txt",
+				"Shared/Fonts/SairaCondensed-Bold.ttf",
+				"Shared/Fonts/SairaCondensed-SemiBold.ttf",
+				"Shared/Fonts/SairaSemiCondensed-Bold.ttf",
+				"Shared/Fonts/SairaSemiCondensed-SemiBold.ttf",
 			);
 			target = 07F9C5D12F0DBFF400A21704 /* CDLWidgetsExtension */;
 		};
@@ -67,6 +72,13 @@
 			);
 			target = 07F9C59F2F0DBF1400A21704 /* CDL App */;
 		};
+		0A11F0A12F20000000C0FFEE /* Exceptions for "CDL App" folder in "CDL App" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 07F9C59F2F0DBF1400A21704 /* CDL App */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -74,6 +86,7 @@
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				074DCDF12F101C5200FE5452 /* Exceptions for "CDL App" folder in "CDLWidgetsExtension" target */,
+				0A11F0A12F20000000C0FFEE /* Exceptions for "CDL App" folder in "CDL App" target */,
 			);
 			path = "CDL App";
 			sourceTree = "<group>";
@@ -411,6 +424,7 @@
 				DEVELOPMENT_TEAM = XRAY5TDTCG;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "CDL App/Info.plist";
 				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -444,6 +458,7 @@
 				DEVELOPMENT_TEAM = XRAY5TDTCG;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "CDL App/Info.plist";
 				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;

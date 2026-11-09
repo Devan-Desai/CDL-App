@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- Fonts bundled from Shared/Fonts (SIL Open Font License, see OFL.txt).
+	     Xcode merges this file with the settings it generates itself. -->
+	<key>UIAppFonts</key>
+	<array>
+		<string>SairaCondensed-Bold.ttf</string>
+		<string>SairaCondensed-SemiBold.ttf</string>
+		<string>SairaSemiCondensed-Bold.ttf</string>
+		<string>SairaSemiCondensed-SemiBold.ttf</string>
+	</array>
+</dict>
+</plist>

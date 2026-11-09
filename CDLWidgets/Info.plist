@@ -7,5 +7,14 @@
 		<key>NSExtensionPointIdentifier</key>
 		<string>com.apple.widgetkit-extension</string>
 	</dict>
+	<!-- Same fonts as the app (Shared/Fonts): the widget is a separate program and
+	     has to register them itself. -->
+	<key>UIAppFonts</key>
+	<array>
+		<string>SairaCondensed-Bold.ttf</string>
+		<string>SairaCondensed-SemiBold.ttf</string>
+		<string>SairaSemiCondensed-Bold.ttf</string>
+		<string>SairaSemiCondensed-SemiBold.ttf</string>
+	</array>
 </dict>
 </plist>
