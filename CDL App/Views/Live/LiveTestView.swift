@@ -38,6 +38,10 @@ struct LiveTestView: View {
                     Text("Plays a real finished match back map by map (about a minute). Lock the phone — ⌘L in the Simulator — to watch it on the Lock Screen.")
                 }
 
+                #if DEBUG
+                MonsterTestSection()
+                #endif
+
                 if let status = live.status {
                     Section("Status") {
                         Text(status)

@@ -19,7 +19,7 @@ enum CDLPageLoader {
 
         var errorDescription: String? {
             switch self {
-            case .badStatus(let code): return "The CDL site answered with HTTP \(code)."
+            case .badStatus(let code): return "The site answered with HTTP \(code)."
             case .noNextData:          return "The page didn't contain the __NEXT_DATA__ block we read."
             }
         }
@@ -27,8 +27,11 @@ enum CDLPageLoader {
 
     /// path: the part after /en-us/, e.g. "teams", "standings", "schedule", "match/13100"
     static func nextData(path: String) async throws -> Data {
-        let url = URL(string: "https://www.callofdutyleague.com/en-us/\(path)")!
+        try await nextData(url: URL(string: "https://www.callofdutyleague.com/en-us/\(path)")!)
+    }
 
+    /// The same thing for any Next.js page, wherever it lives.
+    static func nextData(url: URL) async throws -> Data {
         // `await` = "pause here until the download finishes, without freezing the app".
         let (data, response) = try await URLSession.shared.data(from: url)
 

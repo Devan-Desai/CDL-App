@@ -29,7 +29,10 @@ class LiveActivityController: ObservableObject {
 
     // MARK: Follow a real match
 
-    func follow(matchId: Int, teams: TeamsScraperService) {
+    /// `load` is where the match data comes from: the CDL site, unless told otherwise.
+    func follow(matchId: Int,
+                teams: TeamsScraperService,
+                load: @escaping (Int) async throws -> MatchDetail = { try await MatchDetailService.fetch(matchId: $0) }) {
         guard ActivityAuthorizationInfo().areActivitiesEnabled else {
             status = "Live Activities are turned off for this app in Settings."
             return
@@ -42,7 +45,7 @@ class LiveActivityController: ObservableObject {
             var activity: Activity<CDLAttributes>?
             while !Task.isCancelled {
                 do {
-                    let detail = try await MatchDetailService.fetch(matchId: matchId)
+                    let detail = try await load(matchId)
                     let state = Self.state(from: detail)
                     // If no new update arrives within 2 minutes (e.g. the app was closed),
                     // iOS marks the scoreboard as out of date.
