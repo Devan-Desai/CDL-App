@@ -99,7 +99,7 @@ enum LiveBackgroundStyle: CaseIterable {
     case split    // hard diagonal edge between the two colors
     case accent   // dark card with a thin two-color bar on top
 
-    static let current: LiveBackgroundStyle = .blend
+    static let current: LiveBackgroundStyle = .split
 }
 
 /// Our fonts (bundled in Shared/Fonts). If a font is missing for some reason, the

@@ -3,7 +3,7 @@
 > Copied from the Claude Project ("CDL Live Activities App") on Nov 6, 2026 so Claude Code can read it.
 > The Project keeps a copy too: if you update one, update the other.
 
-*Written Oct 26, 2026; updated Nov 9. Season 2027 (Modern Warfare 4) starts with the Major I Kickoff Tournament, Fri Dec 4, 2026, 3:00 PM ET.*
+*Written Oct 26, 2026; updated Nov 11. Season 2027 (Modern Warfare 4) starts with the Major I Kickoff Tournament, Fri Dec 4, 2026, 3:00 PM ET.*
 
 ---
 
@@ -12,11 +12,11 @@
 **App (SwiftUI, iOS 26.2, Xcode synchronized folders)**
 - Tabs: Schedule, Live, Standings, Teams. Tapping a match in Schedule opens its match page (map-by-map results).
 - Live Activity (Lock Screen + Dynamic Island) now runs on **real match data**. You can follow a match (updates every 30 s while the app is open) or replay a finished match to test.
-- **Redesigned Live Activity (Nov 9, branch `live-activity-redesign`)**: the live map's score in the middle, series dots (first to 3/4/5), team records, Saira fonts, three background styles (`LiveBackgroundStyle`: blend / split / accent; blend is the default). Built to be the mock-up in the data-access pitch to the CDL / BreakingPoint.
+- **Redesigned Live Activity (Nov 9, branch `live-activity-redesign`)**: the live map's score in the middle, series dots (first to 3/4/5), team records, Saira fonts, three background styles (`LiveBackgroundStyle`: blend / split / accent; **split is the default since Nov 11**). Built to be the mock-up in the data-access pitch to the CDL / BreakingPoint (sent Nov 11).
 - Repo: `github.com/Devan-Desai/CDL-App`.
   - `origin/main` = Phase 2, built and tested (merged + pushed Nov 9).
   - `monster-test` (pushed): debug-only test that follows BreakingPoint matches (Monster Invitational, Nov 6). Not merged; it also holds the `HJK` short name for Hijack.
-  - `live-activity-redesign` (local, not pushed): the redesign above.
+  - `live-activity-redesign` (pushed Nov 9): the redesign above. Not merged into `main` yet.
 - Git flow: work on a branch → merge into `main` (pull request, or local merge + `git push origin main`) → `git pull` → start the next branch from `main`.
 - Learning notes: `docs/PHASE-2-WALKTHROUGH.md` explains each Nov 4 commit.
 
@@ -157,7 +157,8 @@ What this means:
 - [x] 2.5 Built (no errors), tested follow on a live BreakingPoint match and the replay in the Simulator, merged + pushed (Nov 9). Still to do: test on a real phone.
 - [x] 2.6 Live Activity redesign (Nov 9): map score in the center, series dots, records, Saira fonts, three backgrounds. Simulator-tested with the replay.
   - **Caveat:** the status line says LIVE only when the current map has a score. If CDL match pages don't show a score during a map (unknown until Dec 4, see §2), it will say "UP NEXT" for the whole map. Fix then, e.g. with the match status.
-- [ ] 2.7 **← NEXT.** Pick the background (blend / split / accent), take mock-up screenshots, write the pitch email (Phase 5)
+- [x] 2.7 Background picked: **split** (Nov 11). Mock-ups rendered from the real views (kept locally in `docs/mockups/`, not committed). Pitch email with the demo sent (Nov 11).
+- [ ] 2.8 **← NEXT.** Merge `live-activity-redesign` into `main`.
 
 ### Phase 3 — Live test: Kickoff weekend (Dec 4–6)
 - [ ] Save snapshots of schedule + match pages during live matches (real status words, live map scores, update speed)
@@ -181,5 +182,4 @@ What this means:
 - **Logos:** logo-free permanently, or ask for permission? (Switch exists either way.)
 - **Server language:** Swift (Vapor) or JavaScript (Cloudflare Workers)?
 - **Minimum iOS version:** currently 26.2. Lowering to 18 would reach more people; broadcast Live Activity push needs iOS 18+ anyway.
-- **Live Activity background:** blend (default), split or accent? One line: `LiveBackgroundStyle.current`.
 - **What to build before Dec 4:** a snapshot recorder for Kickoff weekend, schedule auto-refresh while live, favourite teams, server groundwork, permission emails.
