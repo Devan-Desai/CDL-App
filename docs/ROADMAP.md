@@ -17,7 +17,7 @@
   - `origin/main` = Phase 2, built and tested (merged + pushed Nov 9).
   - `monster-test` (pushed): debug-only test that follows BreakingPoint matches (Monster Invitational, Nov 6). Not merged; it also holds the `HJK` short name for Hijack.
   - `live-activity-redesign`: the redesign above, merged into `main` and pushed (Nov 11).
-  - `kickoff-recorder` (local, not pushed): the Kickoff weekend recorder (Phase 3) + page loader cache fix.
+  - `kickoff-recorder` (pushed Nov 11, not merged): the Kickoff weekend recorder (Phase 3) + page loader cache fix.
 - Git flow: work on a branch → merge into `main` (pull request, or local merge + `git push origin main`) → `git pull` → start the next branch from `main`.
 - Learning notes: `docs/PHASE-2-WALKTHROUGH.md` explains each Nov 4 commit.
 
