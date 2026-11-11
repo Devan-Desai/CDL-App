@@ -25,8 +25,12 @@ enum MatchDetailService {
     }
 
     static func fetch(matchId: Int) async throws -> MatchDetail {
-        let json = try await CDLPageLoader.nextData(path: "match/\(matchId)")
+        try detail(from: try await CDLPageLoader.nextData(path: "match/\(matchId)"))
+    }
 
+    /// The decoding half on its own, so the Kickoff recorder can keep the raw page too
+    /// (and so a saved page can be fed back in later to test fixes).
+    static func detail(from json: Data) throws -> MatchDetail {
         // blocks → cdlMatchDetail → matchData (found wherever it is, like the schedule)
         let blocks = try JSONFinder.findAll(key: "cdlMatchDetail", in: json)
         guard let block = blocks.first,
