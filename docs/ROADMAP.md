@@ -16,7 +16,8 @@
 - Repo: `github.com/Devan-Desai/CDL-App`.
   - `origin/main` = Phase 2, built and tested (merged + pushed Nov 9).
   - `monster-test` (pushed): debug-only test that follows BreakingPoint matches (Monster Invitational, Nov 6). Not merged; it also holds the `HJK` short name for Hijack.
-  - `live-activity-redesign` (pushed Nov 9): the redesign above. Not merged into `main` yet.
+  - `live-activity-redesign`: the redesign above, merged into `main` and pushed (Nov 11).
+  - `kickoff-recorder` (local, not pushed): the Kickoff weekend recorder (Phase 3) + page loader cache fix.
 - Git flow: work on a branch → merge into `main` (pull request, or local merge + `git push origin main`) → `git pull` → start the next branch from `main`.
 - Learning notes: `docs/PHASE-2-WALKTHROUGH.md` explains each Nov 4 commit.
 
@@ -67,6 +68,8 @@ All CDL pages are built with Next.js and carry their data as JSON in `<script id
 **Standings page notes (Nov 9):** the Major tabs exist but have no rows yet (only the open tab is filled by the server). The app uses the last Major tab with any series played; until then it shows the season record. **Check on Kickoff weekend** whether Major I gets rows, or becomes the open tab.
 
 **BreakingPoint notes (Monster Invitational test, Nov 6):** match pages are Next.js with `__NEXT_DATA__` (`initialMatchState`). Status words `upcoming` / `live` / `complete`. Their own team IDs (differ from the CDL's, e.g. 11 = G2 there, Gentle Mates here). Finished maps only: in 73 samples no map appeared until it ended, so no live map score. Pages are cached copies, on average ~3.5 min old, up to 12 min.
+
+**Freshness (Nov 11):** every CDL page is sent with `cache-control: max-age=180` and served through CloudFront. Repeated requests get the same copy for up to 3 minutes (`x-cache: Hit`, `age: 32`, `age: 64`, …). So a live score can be up to ~3 min behind, however often we poll. The app now ignores the *phone's* own copy (`CDLPageLoader`); the recorder logs the CDN age of every page.
 
 **Match page notes (Nov 4, sampled ~35 pages):**
 - **host = home team** on 33/33 maps.
@@ -158,9 +161,11 @@ What this means:
 - [x] 2.6 Live Activity redesign (Nov 9): map score in the center, series dots, records, Saira fonts, three backgrounds. Simulator-tested with the replay.
   - **Caveat:** the status line says LIVE only when the current map has a score. If CDL match pages don't show a score during a map (unknown until Dec 4, see §2), it will say "UP NEXT" for the whole map. Fix then, e.g. with the match status.
 - [x] 2.7 Background picked: **split** (Nov 11). Mock-ups rendered from the real views (kept locally in `docs/mockups/`, not committed). Pitch email with the demo sent (Nov 11).
-- [ ] 2.8 **← NEXT.** Merge `live-activity-redesign` into `main`.
+- [x] 2.8 Merged `live-activity-redesign` into `main` (Nov 11).
 
 ### Phase 3 — Live test: Kickoff weekend (Dec 4–6)
+- [x] Recorder built (Nov 11, `Storage/SnapshotRecorder.swift`): Live tab → "Save match pages while following", then follow a match. Saves each match page (every 30 s) + the schedule (~2 min) to Files → On My iPhone → CDL App → Snapshots, with a `log.csv` (status, series, map scores, CDN age). Tested in the Simulator.
+- [ ] **← NEXT.** Test the app + recorder on a real iPhone (cable needed)
 - [ ] Save snapshots of schedule + match pages during live matches (real status words, live map scores, update speed)
 - [ ] Confirm schedule entries gain team cards once the matchups are announced
 - [ ] Adjust `MatchDetail.currentMap`, `MatchStatus` and the polling interval to match
