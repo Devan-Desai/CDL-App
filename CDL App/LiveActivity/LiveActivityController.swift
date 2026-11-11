@@ -19,6 +19,7 @@
 import Foundation
 import ActivityKit
 import Combine
+import UIKit      // UIApplication: keeps the screen on while recording
 
 class LiveActivityController: ObservableObject {
     @Published private(set) var followedMatchId: Int?   // the match being followed, if any
@@ -38,11 +39,34 @@ class LiveActivityController: ObservableObject {
         followedMatchId = matchId
         status = "Starting…"
 
+        // Kickoff recorder: iOS pauses the app once the phone locks, which would stop the
+        // recording. So while recording, keep the screen on (best with the phone on a charger).
+        let recording = SnapshotRecorder.isOn
+        UIApplication.shared.isIdleTimerDisabled = recording
+
         work = Task {
             var activity: Activity<CDLAttributes>?
+            var round = 0
             while !Task.isCancelled {
                 do {
-                    let detail = try await MatchDetailService.fetch(matchId: matchId)
+                    // Every 4th round (~2 min): a copy of the schedule page too. Its own do/catch,
+                    // so a problem there never stops the match from updating.
+                    if recording && round % 4 == 0 {
+                        do { SnapshotRecorder.saveSchedulePage(try await CDLPageLoader.page(path: "schedule")) }
+                        catch { print("⚠️ [Recorder] Schedule page: \(error.localizedDescription)") }
+                    }
+                    round += 1
+
+                    // Download → (save the raw page) → decode. `Result { … }` holds either the
+                    // MatchDetail or the error, so the recorder can log both; `.get()` then
+                    // continues with the detail, or throws the error as before.
+                    let page = try await CDLPageLoader.page(path: "match/\(matchId)")
+                    let result = Result { try MatchDetailService.detail(from: page.json) }
+                    if recording {
+                        SnapshotRecorder.saveMatchPage(page, matchId: matchId, result: result)
+                    }
+                    let detail = try result.get()
+
                     let state = Self.state(from: detail)
                     // If no new update arrives within 2 minutes (e.g. the app was closed),
                     // iOS marks the scoreboard as out of date.
@@ -62,6 +86,7 @@ class LiveActivityController: ObservableObject {
                         break
                     }
                     status = "Following — last update \(Date().formatted(date: .omitted, time: .shortened))"
+                        + (recording ? " · recording" : "")
                 } catch is CancellationError {
                     break
                 } catch {
@@ -69,7 +94,10 @@ class LiveActivityController: ObservableObject {
                 }
                 try? await Task.sleep(for: .seconds(30))
             }
-            if followedMatchId == matchId { followedMatchId = nil }
+            if followedMatchId == matchId {
+                followedMatchId = nil
+                UIApplication.shared.isIdleTimerDisabled = false   // the phone may lock again
+            }
         }
     }
 
@@ -126,6 +154,7 @@ class LiveActivityController: ObservableObject {
         work = nil
         followedMatchId = nil
         isReplaying = false
+        UIApplication.shared.isIdleTimerDisabled = false
         let running = Activity<CDLAttributes>.activities
         Task {
             for activity in running {

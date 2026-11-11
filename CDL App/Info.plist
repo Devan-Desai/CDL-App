@@ -11,5 +11,11 @@
 		<string>SairaSemiCondensed-Bold.ttf</string>
 		<string>SairaSemiCondensed-SemiBold.ttf</string>
 	</array>
+	<!-- Show the app's Documents folder in the Files app (and in Finder with a cable),
+	     so the Kickoff recorder's snapshots can be copied off the phone. -->
+	<key>UIFileSharingEnabled</key>
+	<true/>
+	<key>LSSupportsOpeningDocumentsInPlace</key>
+	<true/>
 </dict>
 </plist>
