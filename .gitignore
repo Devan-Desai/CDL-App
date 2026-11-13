@@ -6,3 +6,7 @@ xcuserdata/
 *.xcuserstate
 DerivedData/
 build/
+
+# Server (Swift package): build output and Xcode/SwiftPM per-user files
+Server/.build/
+Server/.swiftpm/

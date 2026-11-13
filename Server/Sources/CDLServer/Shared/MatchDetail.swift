@@ -1,0 +1,1 @@
+../../../../CDL App/Models/MatchDetail.swift
