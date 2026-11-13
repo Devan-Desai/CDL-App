@@ -27,6 +27,10 @@ Dynamic Island), in the style of Apple Sports.
 - Xcode uses synchronized folders: new files in `CDL App/` join the app target automatically.
   Files in `CDL App/Shared/` must ALSO be members of `CDLWidgetsExtension`
   (`membershipExceptions` in `project.pbxproj`, or Target Membership in Xcode).
+- Server (`Server/`, Swift package with Vapor): `cd Server && swift build` (run: `swift run`, then
+  http://127.0.0.1:8080/matches/13100/live). `Server/Sources/CDLServer/Shared/` holds links to app files
+  (CDLPageLoader, JSONFinder, MatchDetailService, MatchDetail, Shared/CDLAttributes,
+  ContentState+MatchDetail). Keep those Foundation-only, and after changing them build BOTH the app and the server.
 
 ## House rules
 1. Match teams by their numeric CDL team ID, never by name (names differ between CDL pages).

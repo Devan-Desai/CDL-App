@@ -3,7 +3,7 @@
 > Copied from the Claude Project ("CDL Live Activities App") on Nov 6, 2026 so Claude Code can read it.
 > The Project keeps a copy too: if you update one, update the other.
 
-*Written Oct 26, 2026; updated Nov 11. Season 2027 (Modern Warfare 4) starts with the Major I Kickoff Tournament, Fri Dec 4, 2026, 3:00 PM ET.*
+*Written Oct 26, 2026; updated Nov 12. Season 2027 (Modern Warfare 4) starts with the Major I Kickoff Tournament, Fri Dec 4, 2026, 3:00 PM ET.*
 
 ---
 
@@ -17,7 +17,7 @@
   - `origin/main` = Phase 2, built and tested (merged + pushed Nov 9).
   - `monster-test` (pushed): debug-only test that follows BreakingPoint matches (Monster Invitational, Nov 6). Not merged; it also holds the `HJK` short name for Hijack.
   - `live-activity-redesign`: the redesign above, merged into `main` and pushed (Nov 11).
-  - `kickoff-recorder` (pushed Nov 11, not merged): the Kickoff weekend recorder (Phase 3) + page loader cache fix.
+  - `kickoff-recorder`: merged into `main` (Nov 12): the Kickoff weekend recorder (Phase 3) + page loader cache fix.
 - Git flow: work on a branch → merge into `main` (pull request, or local merge + `git push origin main`) → `git pull` → start the next branch from `main`.
 - Learning notes: `docs/PHASE-2-WALKTHROUGH.md` explains each Nov 4 commit.
 
@@ -119,7 +119,7 @@ What this means:
                        Live Activity on iPhone ◄── iOS app
 ```
 
-**Now:** the app does the server's job itself while it's open (`LiveActivityController.follow`). The pieces a server would need already exist as separate parts: `MatchDetailService` → `LiveActivityController.state(from:)` → `ContentState`. Moving them to a server is mostly relocation. Server language: Swift (Vapor, reuses these exact types) or JavaScript (Cloudflare Workers). Decide in Phase 4.
+**Now:** the app still does the server's job itself while it's open (`LiveActivityController.follow`). **Since Nov 12 there is a server too** (`Server/`, Swift + Vapor, runs on the Mac; see `Server/README.md`). It compiles the app's own files through links in `Server/Sources/CDLServer/Shared/`: `MatchDetailService` → `MatchDetail` → `ContentState(detail:)`. So the phone and the server can't disagree about the scoreboard. It serves `/matches/{id}` (our own JSON) and `/matches/{id}/live` (the exact `ContentState` a push will carry), downloads each match at most once a minute, and its poller keeps watched matches fresh. Where a push will go is marked `TODO: Phase 4` in `MatchStore.swift`.
 
 ---
 
@@ -171,6 +171,8 @@ What this means:
 - [ ] Adjust `MatchDetail.currentMap`, `MatchStatus` and the polling interval to match
 
 ### Phase 4 — Server + push (December → January)
+- [x] Server groundwork (Nov 12, branch `server`): Vapor server on the Mac, shared code with the app, one download per match per minute, poller, change detection (logged).
+- [ ] Point the app's follow loop at the server (setting with the server address), test from the iPhone over Wi-Fi
 - [ ] Join the Apple Developer Program; create an APNs key
 - [ ] Server poller → APNs Live Activity pushes (broadcast channel per match)
 - [ ] Favourite teams + push-to-start
@@ -185,6 +187,5 @@ What this means:
 
 ## 8. Open decisions
 - **Logos:** logo-free permanently, or ask for permission? (Switch exists either way.)
-- **Server language:** Swift (Vapor) or JavaScript (Cloudflare Workers)?
 - **Minimum iOS version:** currently 26.2. Lowering to 18 would reach more people; broadcast Live Activity push needs iOS 18+ anyway.
 - **What to build before Dec 4:** a snapshot recorder for Kickoff weekend, schedule auto-refresh while live, favourite teams, server groundwork, permission emails.
