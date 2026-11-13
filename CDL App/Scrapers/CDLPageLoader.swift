@@ -16,6 +16,9 @@
 //
 
 import Foundation
+#if canImport(FoundationNetworking)
+import FoundationNetworking   // on Linux (where the server may run one day) URLSession lives here
+#endif
 import SwiftSoup
 
 enum CDLPageLoader {

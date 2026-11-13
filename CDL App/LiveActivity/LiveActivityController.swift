@@ -67,7 +67,7 @@ class LiveActivityController: ObservableObject {
                     }
                     let detail = try result.get()
 
-                    let state = Self.state(from: detail)
+                    let state = CDLAttributes.ContentState(detail: detail)
                     // If no new update arrives within 2 minutes (e.g. the app was closed),
                     // iOS marks the scoreboard as out of date.
                     let content = ActivityContent(state: state, staleDate: Date().addingTimeInterval(120))
@@ -184,25 +184,6 @@ class LiveActivityController: ObservableObject {
             colorHex: team?.primaryColorHex ?? side.colorHex ?? "#8E8E93",
             logoAsset: TeamLogos.assetName(forTeamId: side.id),
             record: standings.record(forTeamId: side.id))
-    }
-
-    /// The changing part. Three situations:
-    ///  • final       → the last map played (for the "MAP 4 · HARDPOINT · 250–197" line)
-    ///  • a map slot without a winner → that map: LIVE if it has a score, UP NEXT if not
-    ///  • nothing listed yet → UP NEXT for the map after the ones played (name unknown)
-    static func state(from detail: MatchDetail) -> CDLAttributes.ContentState {
-        let map = detail.isFinal ? detail.playedMaps.last : detail.currentMap
-        return CDLAttributes.ContentState(
-            team1Maps: detail.team1MapsWon,
-            team2Maps: detail.team2MapsWon,
-            mapNumber: map?.number ?? detail.playedMaps.count + 1,
-            mapName: map?.mapName ?? "",
-            modeName: map?.mode ?? "",
-            shortMode: map?.shortMode ?? "",
-            team1MapScore: map?.team1Score,
-            team2MapScore: map?.team2Score,
-            mapsToWin: detail.mapsToWin,
-            isFinal: detail.isFinal)
     }
 
     /// A finished match as a little "film". For every map: up next (no score yet),

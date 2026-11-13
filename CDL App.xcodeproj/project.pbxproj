@@ -49,6 +49,7 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Assets.xcassets,
+				Shared/CDLAttributes.swift,
 				"Shared/Color+Hex.swift",
 				Shared/Fonts/OFL.txt,
 				"Shared/Fonts/SairaCondensed-Bold.ttf",
